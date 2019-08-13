@@ -21,10 +21,6 @@ import io.reactivex.Single
 
 import javax.validation.constraints.NotBlank
 
-/**
- * @author James Kleeh
- * @since 1.0
- */
 @Client("/")
 interface HelloClient {
 

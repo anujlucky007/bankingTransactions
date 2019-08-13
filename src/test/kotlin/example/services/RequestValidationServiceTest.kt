@@ -39,7 +39,7 @@ class RequestValidationServiceTest{
     }
 
     @Test
-    fun `should return Lock on Account when accound Id is not present in requestMap`() {
+    fun `should return true on when requestId is not present in requestMap for account`() {
 
         var lock = requestValidationService.validateRequest(1234,"tx1")
         lock shouldNotBe  null
@@ -47,7 +47,7 @@ class RequestValidationServiceTest{
     }
 
     @Test
-    fun `should throw exception when requestid is duplicate for account Number`() {
+    fun `should throw exception when requestId is duplicate for account Number`() {
 
         var lock = requestValidationService.validateRequest(1234,"tx1")
         lock shouldNotBe  null

@@ -11,7 +11,6 @@ class RequestValidationService(var lockService: LockService) {
 
     fun validateRequest(accountNumber: Int, transactionRequestId: String) : Boolean {
         var lockMapPair = lockService.getLockOnRequestForAccount(accountNumber = accountNumber.toString())
-
         lockMapPair.first.lock()
         try {
             val requestSet = lockMapPair.second[accountNumber.toString()]

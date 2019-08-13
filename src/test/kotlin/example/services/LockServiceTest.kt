@@ -48,4 +48,27 @@ class LockServiceTest {
 
     }
 
+    @Test
+    fun `should get Lock on Account`() {
+
+        var lockMapPair = lockService.getLockOnAccount("1234")
+        lockMapPair shouldNotBe  null
+        lockMapPair.isHeldByCurrentThread shouldBe true
+        lockMapPair.isLocked shouldBe true
+        lockMapPair.unlock()
+    }
+
+    @Test
+    fun `should release Lock on Account`() {
+
+        var lockMapPair = lockService.getLockOnAccount("1234")
+
+        var lockReleased=lockService.releaseLockOnAccount(lockMapPair)
+
+        lockReleased shouldBe true
+        lockMapPair.isHeldByCurrentThread shouldBe false
+        lockMapPair.isLocked shouldBe false
+
+    }
+
 }

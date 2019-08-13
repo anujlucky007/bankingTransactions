@@ -22,7 +22,7 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 
 @Controller("/account")
-class AccountController(val greetingService : GreetingService) {
+class AccountController() {
 
     @Get("/{accountId}}")
     fun getAccount(accountId: String): Account {

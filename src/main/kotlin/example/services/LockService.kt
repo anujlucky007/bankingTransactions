@@ -5,6 +5,7 @@ import example.client.ApplicationRedissonClient
 import org.redisson.api.RLock
 import org.redisson.api.RMap
 import javax.inject.Singleton
+import javax.swing.text.html.ObjectView
 
 @Singleton
 class LockService(val applicationRedissonClient: ApplicationRedissonClient) {
@@ -19,5 +20,27 @@ class LockService(val applicationRedissonClient: ApplicationRedissonClient) {
         }
         return Pair(requestMap.getFairLock(accountNumber),requestMap)
         }
+
+    fun  getLockOnAccount(accountNumber:String) : RLock {
+
+        val requestMap= applicationRedissonClient.getRedissonClient().getMap<String, Object>("accountMap")
+        if(!requestMap.containsKey(accountNumber)){
+            val lockObject=Object()
+            requestMap.fastPutIfAbsent(accountNumber,lockObject)
+        }
+        val lock=requestMap.getFairLock(accountNumber)
+        lock.lock()
+        return lock
+    }
+
+    fun  releaseLockOnAccount(lock:RLock) : Boolean {
+        return when {
+            lock.isHeldByCurrentThread -> {
+                lock.unlock()
+                true
+            }
+            else -> false
+        }
+    }
 
 }
