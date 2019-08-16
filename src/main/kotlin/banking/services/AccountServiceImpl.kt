@@ -1,24 +1,31 @@
 package banking.services
 
-import banking.dto.AccountActivityRequest
-import banking.dto.AccountActivityResponse
-import banking.dto.ActivityStatus
-import banking.dto.ActivityType
 import banking.model.Account
 import io.micronaut.spring.tx.annotation.Transactional
 import banking.dao.AccountRepository
+import banking.dto.*
+import banking.model.AccountStatus
+import banking.model.AccountType
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Singleton
 open class AccountServiceImpl(private val lockService: LockService, private val exchangeService: ExchangeService, private val accountRepository: AccountRepository) : AccountService {
+    override fun createAccount(accountCreationRequest: AccountDTO): AccountDTO {
+        val account= Account(id=0,baseCurrency = "INR",accountBalance = 0.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
+       val createdAccount= accountRepository.save(account)
+        return accountCreationRequest.copy(accountNumber =createdAccount.id)
+    }
 
-    override fun getAccountDetails(accountNumber: String): String {
-        val lockOnAccount=lockService.getLockOnAccount(accountNumber)
+    override fun getAccountDetails(accountNumber: Long): Account {
+        val lockOnAccount=lockService.getLockOnAccount(accountNumber.toString())
         //directly fetch from db
+        val account=accountRepository.findById(accountNumber.toLong())
 
         lockService.releaseLockOnAccount(lockOnAccount)
-        return "Hello $accountNumber"
+
+        return account!!
+
     }
 
     @Transactional

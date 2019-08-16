@@ -16,15 +16,24 @@
 package banking.controller
 
 
+import banking.dto.AccountDTO
 import banking.model.Account
+import banking.services.AccountService
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Post
 
 @Controller("/account")
-class AccountController() {
+class AccountController(val accountService: AccountService) {
 
     @Get("/{accountId}}")
-    fun getAccount(accountId: String): Account {
-        return Account(1)
+    fun getAccount(accountId: Long): Account {
+        return accountService.getAccountDetails(accountId)
+    }
+
+    @Post("/create")
+    fun createAccount(account: AccountDTO): AccountDTO {
+
+        return  accountService.createAccount(account)
     }
 }
