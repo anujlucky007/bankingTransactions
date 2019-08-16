@@ -40,4 +40,10 @@ class AccountController(val accountService: AccountService) {
 
         return  accountService.createAccount(account)
     }
+
+    @Post("/addBalance")
+    fun addBalanceAccount(@Body @Valid account: AccountDTO): AccountDTO {
+
+        return  accountService.createAccount(account)
+    }
 }

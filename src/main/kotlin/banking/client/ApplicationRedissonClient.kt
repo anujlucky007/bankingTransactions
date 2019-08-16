@@ -5,12 +5,15 @@ import org.redisson.api.RedissonClient
 import javax.inject.Singleton
 
 @Singleton
-class ApplicationRedissonClient {
+open class ApplicationRedissonClient {
 
-    val redissonClientInstance = Redisson.create()
+    var redissonClientInstance :RedissonClient? =null
 
     fun getRedissonClient() : RedissonClient {
-        return redissonClientInstance
+        when (redissonClientInstance) {
+            null -> redissonClientInstance= Redisson.create()
+        }
+        return redissonClientInstance!!
     }
 
 }

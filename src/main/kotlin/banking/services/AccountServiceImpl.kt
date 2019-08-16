@@ -1,5 +1,6 @@
 package banking.services
 
+import banking.GenericException
 import banking.model.Account
 import io.micronaut.spring.tx.annotation.Transactional
 import banking.dao.AccountRepository
@@ -20,12 +21,14 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
 
     override fun getAccountDetails(accountNumber: Long): Account {
         val lockOnAccount=lockService.getLockOnAccount(accountNumber.toString())
-        //directly fetch from db
         val account=accountRepository.findById(accountNumber)
-
         lockService.releaseLockOnAccount(lockOnAccount)
 
-        return account!!
+        if(account==null){
+            throw GenericException("Account Not Found","ACC.INAVLID.001")
+        }
+
+        return account
 
     }
 
