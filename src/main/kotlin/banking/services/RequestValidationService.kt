@@ -2,7 +2,6 @@ package banking.services
 
 import banking.DuplicateException
 import banking.ValidationException
-import java.lang.Exception
 import javax.inject.Singleton
 
 @Singleton

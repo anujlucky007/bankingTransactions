@@ -17,9 +17,6 @@ package banking.controller
 
 
 import banking.model.Account
-import banking.GreetingService
-import banking.model.AccountStatus
-import banking.model.AccountType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 

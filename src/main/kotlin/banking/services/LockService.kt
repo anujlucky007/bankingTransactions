@@ -1,11 +1,9 @@
 package banking.services
 
-import banking.model.TransactionRequest
 import banking.client.ApplicationRedissonClient
 import org.redisson.api.RLock
 import org.redisson.api.RMap
 import javax.inject.Singleton
-import javax.swing.text.html.ObjectView
 
 @Singleton
 class LockService(val applicationRedissonClient: ApplicationRedissonClient) {

@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class TransactionService(var requestValidationService: RequestValidationService,val accountService: AccountService) {
+class TransactionService(var requestValidationService: RequestValidationService,val accountService: AccountServiceImpl) {
 
     fun transact(accountNumber: Long,transactionRequest: TransactionRequest): String {
         // 1. is transaction request valid

@@ -2,19 +2,14 @@ package banking.services
 
 import banking.ValidationException
 import banking.client.ApplicationRedissonClient
-import banking.services.LockService
-import banking.services.RequestValidationService
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
-import io.mockk.every
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.redisson.Redisson
 import redis.embedded.RedisServer
 
 @ExtendWith(MockKExtension::class)
