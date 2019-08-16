@@ -6,7 +6,7 @@ import banking.dto.ActivityStatus
 import banking.dto.ActivityType
 import banking.model.Account
 import io.micronaut.spring.tx.annotation.Transactional
-import odelia.micronaut.jpa.kotlin.AccountRepository
+import banking.dao.AccountRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 

@@ -8,7 +8,7 @@ datasources:
 jpa:
   default:
     packages-to-scan:
-      - 'example.model'
+      - 'banking.model'
     properties:
       hibernate:
         hbm2ddl:

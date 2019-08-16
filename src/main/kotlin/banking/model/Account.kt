@@ -5,15 +5,16 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Account")
-class Account {
-
-    val id:Long = 0
-    val baseCurrency:String = ""
-    var accountBalance : Double = 0.0
-    val lockedBalance:Double = 0.0
-    val type : AccountType = AccountType.SAVINGS
-    val status : AccountStatus = AccountStatus.ACTIVE
-}
+data class Account(
+        @Id
+        @GeneratedValue
+        val id: Long,
+        val baseCurrency: String ="",
+        var accountBalance: Double=0.0,
+        val lockedBalance: Double=0.0,
+        val type: AccountType=AccountType.SAVINGS,
+        val status: AccountStatus= AccountStatus.ACTIVE
+)
 
 enum class AccountStatus {
 CLOSED,

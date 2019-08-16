@@ -1,4 +1,4 @@
-package odelia.micronaut.jpa.kotlin
+package banking.dao
 
 import banking.model.Account
 import javax.validation.constraints.NotBlank

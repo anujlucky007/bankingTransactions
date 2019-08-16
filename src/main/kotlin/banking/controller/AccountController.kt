@@ -25,6 +25,6 @@ class AccountController() {
 
     @Get("/{accountId}}")
     fun getAccount(accountId: String): Account {
-        return Account()
+        return Account(1)
     }
 }

@@ -1,10 +1,8 @@
-package odelia.micronaut.jpa.kotlin
+package banking.dao
 
 import banking.model.Account
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession
-import io.micronaut.runtime.ApplicationConfiguration
 import io.micronaut.spring.tx.annotation.Transactional
-import java.util.*
 import javax.inject.Singleton
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
@@ -12,8 +10,7 @@ import javax.validation.constraints.NotBlank
 
 @Singleton
 open class AccountRepositoryImpl(@param:CurrentSession @field:PersistenceContext
-                          private val entityManager: EntityManager,
-                                 private val applicationConfiguration: ApplicationConfiguration) : AccountRepository {
+                          private val entityManager: EntityManager) : AccountRepository {
 
     @Transactional(readOnly = true)
     override fun findById(id: Long): Account? {
@@ -28,15 +25,9 @@ open class AccountRepositoryImpl(@param:CurrentSession @field:PersistenceContext
 
     @Transactional
     override fun updateBalance(id: Long, @NotBlank updatedBalance: Double): Int {
-
-        val queryString=""
-        return entityManager.createQuery(queryString)
-                .setParameter("name", updatedBalance)
+        return entityManager.createQuery("update Account set accountBalance = :newBalance where id = :id",Account::class.java)
+                .setParameter("newBalance", updatedBalance)
                 .setParameter("id", id)
                 .executeUpdate()
-    }
-
-    companion object {
-        private val VALID_PROPERTY_NAMES = Arrays.asList("id", "name")
     }
 }

@@ -28,7 +28,7 @@ object Application {
 
         println(" rediss server started " + redisServer.isActive + redisServer.ports())
         Micronaut.build()
-                .packages("example")
+                .packages("banking")
                 .mainClass(Application.javaClass)
                 .start()
     }
