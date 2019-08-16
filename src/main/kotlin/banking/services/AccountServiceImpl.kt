@@ -44,12 +44,16 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
             accountDetails = accountRepository.findById(accountActivityRequest.accountNumber)
 
             val amount = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails!!.baseCurrency, accountActivityRequest.transactionAmount.value)
-            val updatedAccountBalance = when {
-                accountActivityRequest.activityType == ActivityType.DEPOSIT -> accountDetails.accountBalance + amount
-                else -> {
-                    0.0
-                }
-            }
+            val updatedAccountBalance =
+                    when (accountActivityRequest.activityType) {
+                        ActivityType.DEPOSIT -> accountDetails.accountBalance + amount
+                        ActivityType.WITHDRAW -> {
+                            when {
+                                accountDetails.accountBalance < amount -> throw GenericException("", "OBB")
+                                else -> accountDetails.accountBalance - amount
+                                }
+                        }
+                    }
             accountDetails.accountBalance=updatedAccountBalance
             val accountTransactional=AccountTransaction(transactionRemark = accountActivityRequest.activityRemark,transactionType = accountActivityRequest.activityType,amount = amount,account =accountDetails)
             accountRepository.updateBalance(accountDetails.id,accountDetails)

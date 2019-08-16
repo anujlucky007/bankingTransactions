@@ -4,10 +4,7 @@ import banking.GenericException
 import banking.ValidationException
 import banking.client.ApplicationRedissonClient
 import banking.dao.impl.AccountRepositoryImpl
-import banking.dto.AccountActivityRequest
-import banking.dto.AccountDTO
-import banking.dto.ActivityType
-import banking.dto.TransactionAmount
+import banking.dto.*
 import banking.model.Account
 import banking.model.AccountStatus
 import banking.model.AccountType
@@ -99,9 +96,10 @@ class AccountServiceImplTest{
 
         val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "Deposit",transactionAmount = TransactionAmount(1000.00,"INR"),activityType = ActivityType.DEPOSIT)
 
-        val actualAccount=accountService.doAccountActivity(accountActivityRequest)
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
 
-        actualAccount.accountNumber shouldNotBe null
+        actualAccountActivityResponse.accountNumber shouldBe  account.id
+        actualAccountActivityResponse.status shouldBe ActivityStatus.COMPLETED
 
         val actualAccount1=accountService.getAccountDetails(account.id)
         actualAccount1.accountBalance shouldBe 1100.00
@@ -112,12 +110,69 @@ class AccountServiceImplTest{
 
         val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "Deposit",transactionAmount = TransactionAmount(1000.00,"USD"),activityType = ActivityType.DEPOSIT)
 
-        val actualAccount=accountService.doAccountActivity(accountActivityRequest)
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
 
-        actualAccount.accountNumber shouldNotBe null
+        actualAccountActivityResponse.accountNumber shouldBe account.id
+        actualAccountActivityResponse.status shouldBe ActivityStatus.COMPLETED
 
         val actualAccount1=accountService.getAccountDetails(account.id)
         actualAccount1.accountBalance shouldBe 70100.00
+    }
+
+    @Test
+    fun `should withdraw amount in account return update Account balance if currency is same`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "withdraw",transactionAmount = TransactionAmount(10.00,"INR"),activityType = ActivityType.WITHDRAW)
+
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccountActivityResponse.accountNumber shouldBe account.id
+        actualAccountActivityResponse.status shouldBe ActivityStatus.COMPLETED
+
+        val actualAccount1=accountService.getAccountDetails(account.id)
+        actualAccount1.accountBalance shouldBe 90.00
+    }
+
+    @Test
+    fun `should mark withdrawl request as ERROR when withdraw amount is More than amount available in account also if currency is same`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "withdraw",transactionAmount = TransactionAmount(110.00,"INR"),activityType = ActivityType.WITHDRAW)
+
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccountActivityResponse.accountNumber shouldBe account.id
+        actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+
+        val actualAccount1=accountService.getAccountDetails(account.id)
+        actualAccount1.accountBalance shouldBe 100.00
+    }
+
+    @Test
+    fun `should withdraw amount in account return update Account balance if currency is different`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "withdraw",transactionAmount = TransactionAmount(1.00,"USD"),activityType = ActivityType.WITHDRAW)
+
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccountActivityResponse.accountNumber shouldBe account.id
+        actualAccountActivityResponse.status shouldBe ActivityStatus.COMPLETED
+
+        val actualAccount1=accountService.getAccountDetails(account.id)
+        actualAccount1.accountBalance shouldBe 30.00
+    }
+
+    @Test
+    fun `should mark withdrawl request as ERROR when withdraw amount is More than amount available in account also if currency is different`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "withdraw",transactionAmount = TransactionAmount(110.00,"USD"),activityType = ActivityType.WITHDRAW)
+
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccountActivityResponse.accountNumber shouldBe account.id
+        actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+
+        val actualAccount1=accountService.getAccountDetails(account.id)
+        actualAccount1.accountBalance shouldBe 100.00
     }
 
 
