@@ -14,3 +14,12 @@ jpa:
         hbm2ddl:
           auto: update
         show_sql: true
+
+application:
+  exchangeRate:
+    conversionMap:
+      INR:
+        USD: 23.00
+        INR: 1.00
+      USD:
+        INR: 70.0

@@ -95,7 +95,7 @@ class AccountServiceImplTest{
     }
 
     @Test
-    fun `should deposit amount in account return update Account balance`(){
+    fun `should deposit amount in account return update Account balance if currency is same`(){
 
         val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "Deposit",transactionAmount = TransactionAmount(1000.00,"INR"),activityType = ActivityType.DEPOSIT)
 
@@ -105,6 +105,19 @@ class AccountServiceImplTest{
 
         val actualAccount1=accountService.getAccountDetails(account.id)
         actualAccount1.accountBalance shouldBe 1100.00
+    }
+
+    @Test
+    fun `should deposit amount in account return update Account balance if deposit currency is in USD and Account base currency is INR`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "Deposit",transactionAmount = TransactionAmount(1000.00,"USD"),activityType = ActivityType.DEPOSIT)
+
+        val actualAccount=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccount.accountNumber shouldNotBe null
+
+        val actualAccount1=accountService.getAccountDetails(account.id)
+        actualAccount1.accountBalance shouldBe 70100.00
     }
 
 
