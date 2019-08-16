@@ -13,6 +13,9 @@ import javax.persistence.PersistenceContext
 open class AccountTransactionRepositoryImpl(@param:CurrentSession @field:PersistenceContext
                           private val entityManager: EntityManager,
                                             private val applicationConfiguration: ApplicationConfiguration) : AccountTransactionRepository {
+    override fun findTransactionsOfAccount(accountNumber: Long): List<AccountTransaction> {
+        return listOf()
+    }
 
     @Transactional(readOnly = true)
     override fun findById(id: Long): AccountTransaction? {

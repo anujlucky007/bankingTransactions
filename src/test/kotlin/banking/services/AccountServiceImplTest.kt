@@ -4,10 +4,16 @@ import banking.GenericException
 import banking.ValidationException
 import banking.client.ApplicationRedissonClient
 import banking.dao.impl.AccountRepositoryImpl
+import banking.dto.AccountActivityRequest
+import banking.dto.AccountDTO
+import banking.dto.ActivityType
+import banking.dto.TransactionAmount
 import banking.model.Account
 import banking.model.AccountStatus
 import banking.model.AccountType
 import io.kotlintest.shouldBe
+import io.kotlintest.shouldNot
+import io.kotlintest.shouldNotBe
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.test.annotation.MockBean
 import io.mockk.every
@@ -66,12 +72,40 @@ class AccountServiceImplTest{
         val actualException= Assertions.assertThrows(GenericException::class.java) {
             accountService.getAccountDetails(202)
         }
-        actualException.errorCode shouldBe "ACC.INAVLID.001"
+        actualException.errorCode shouldBe "ACC.INVALID.001"
         actualException.errorMessage shouldBe "Account Not Found"
 
 
 
         }
+
+    @Test
+    fun `should create account User and return Account Number`(){
+
+        val accountDto = AccountDTO(accountBalance=100.00, customerName = "Anuj Rai", accountType = AccountType.SAVINGS)
+
+        val actualAccount=accountService.createAccount(accountDto)
+
+        actualAccount.accountNumber shouldNotBe null
+        actualAccount.accountBalance shouldBe 100.00
+        actualAccount.accountType shouldBe AccountType.SAVINGS
+        actualAccount.status shouldBe AccountStatus.ACTIVE
+        actualAccount.baseCurrency shouldBe "INR"
+
+    }
+
+    @Test
+    fun `should deposit amount in account return update Account balance`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "Deposit",transactionAmount = TransactionAmount(1000.00,"INR"),activityType = ActivityType.DEPOSIT)
+
+        val actualAccount=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccount.accountNumber shouldNotBe null
+
+        val actualAccount1=accountService.getAccountDetails(account.id)
+        actualAccount1.accountBalance shouldBe 1100.00
+    }
 
 
 

@@ -42,8 +42,8 @@ class AccountRepositoryImplTest{
         val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
 
         val account=accountRepository.save(acc)
-print(account.id)
-        val updated=accountRepository.updateBalance(account.id,200.00)
+        account.accountBalance=200.00
+        val updated=accountRepository.updateBalance(account.id,acc)
 
         updated shouldBe 1
 

@@ -1,6 +1,7 @@
 package banking.model
 
 
+import banking.dto.ActivityType
 import javax.persistence.*
 
 @Entity
@@ -30,18 +31,13 @@ SAVINGS, CURRENT
 data class AccountTransaction(
         @Id
         @GeneratedValue
-        val id:Long,
+        val id:Long=0,
         @Column(name = "transactionRemark", nullable = false)
         val transactionRemark:String,
         @Column(name = "amount", nullable = false)
         val amount : Double,
         @Column(name = "transactionType", nullable = false)
-        val transactionType:AccountTransactionType,
+        val transactionType: ActivityType,
         @ManyToOne
         val account:Account
 )
-
-enum class AccountTransactionType {
-        WITHDRAWAL,
-        DEPOSIT
-}

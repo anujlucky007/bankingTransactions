@@ -24,10 +24,8 @@ open class AccountRepositoryImpl(@param:CurrentSession @field:PersistenceContext
     }
 
     @Transactional
-    override fun updateBalance(id: Long, @NotBlank updatedBalance: Double): Int {
-        return entityManager.createQuery("update Account set accountBalance = :newBalance where id = :id")
-                .setParameter("newBalance", updatedBalance)
-                .setParameter("id", id)
-                .executeUpdate()
+    override fun updateBalance(id: Long, @NotBlank account: Account): Int {
+        entityManager.merge(account)
+        return 1
     }
 }

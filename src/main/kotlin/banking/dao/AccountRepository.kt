@@ -9,5 +9,5 @@ interface AccountRepository {
 
     fun save(@NotBlank account: Account): Account
 
-    fun updateBalance(id: Long, @NotBlank updatedBalance: Double): Int
+    fun updateBalance(id: Long, @NotBlank account: Account): Int
 }

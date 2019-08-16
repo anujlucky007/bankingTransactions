@@ -2,6 +2,7 @@ package banking.dao
 
 import banking.dao.impl.AccountRepositoryImpl
 import banking.dao.impl.AccountTransactionRepositoryImpl
+import banking.dto.ActivityType
 import banking.model.*
 import io.kotlintest.shouldBe
 import io.micronaut.test.annotation.MicronautTest
@@ -25,7 +26,7 @@ class AccountTransactionRepositoryImplTest{
 
         val account=accountRepository.save(acc)
 
-        val accTransaction= AccountTransaction(id=0,transactionRemark = "deposit",amount = 100.00,transactionType = AccountTransactionType.DEPOSIT,account =account)
+        val accTransaction= AccountTransaction(id=0,transactionRemark = "deposit",amount = 100.00,transactionType = ActivityType.DEPOSIT,account =account)
 
         val accountTransaction=accountTransactionRepository.save(accTransaction)
 
@@ -33,7 +34,7 @@ class AccountTransactionRepositoryImplTest{
 
         actualAccountTransaction!!.account.id shouldBe account.id
         actualAccountTransaction.amount shouldBe 100.00
-        actualAccountTransaction.transactionType shouldBe AccountTransactionType.DEPOSIT
+        actualAccountTransaction.transactionType shouldBe ActivityType.DEPOSIT
         actualAccountTransaction.transactionRemark shouldBe "deposit"
 
 
