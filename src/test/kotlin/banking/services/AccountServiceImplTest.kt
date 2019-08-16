@@ -175,6 +175,20 @@ class AccountServiceImplTest{
         actualAccount1.accountBalance shouldBe 100.00
     }
 
+    @Test
+    fun `should mark withdrawl request as ERROR when withdraw amount currency is Not Known`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "withdraw",transactionAmount = TransactionAmount(110.00,"UNKNOWN"),activityType = ActivityType.WITHDRAW)
+
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccountActivityResponse.accountNumber shouldBe account.id
+        actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+
+        val actualAccount1=accountService.getAccountDetails(account.id)
+        actualAccount1.accountBalance shouldBe 100.00
+    }
+
 
 
 

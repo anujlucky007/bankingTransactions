@@ -58,7 +58,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
             val accountTransactional=AccountTransaction(transactionRemark = accountActivityRequest.activityRemark,transactionType = accountActivityRequest.activityType,amount = amount,account =accountDetails)
             accountRepository.updateBalance(accountDetails.id,accountDetails)
             val accountTransaction=accountTransactionRepository.save(accountTransactional)
-            print("asdsadas"+accountTransaction.id)
+
         }
         catch (ex:Exception){
             return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = 0.0, status = ActivityStatus.ERROR)
