@@ -20,7 +20,7 @@ class AccountTransactionRepositoryImplTest{
 
 
     @Test
-    fun `save account in DB`(){
+    fun `save account transaction in DB`(){
 
         val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
 

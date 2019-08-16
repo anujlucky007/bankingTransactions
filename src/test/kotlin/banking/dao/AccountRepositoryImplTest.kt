@@ -37,15 +37,15 @@ class AccountRepositoryImplTest{
 
     @Test
     @Transactional
-    fun `update balance in  account`(){
+    fun `update balance in account`(){
 
         val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
 
         val account=accountRepository.save(acc)
         account.accountBalance=200.00
-        val updated=accountRepository.updateBalance(account.id,acc)
+        val updatedAccount=accountRepository.updateAccount(acc)
 
-        updated shouldBe 1
+        updatedAccount.accountBalance shouldBe 200.00
 
     }
 
