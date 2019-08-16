@@ -29,6 +29,18 @@ class ExceptionHandler : ExceptionHandler<ValidationException, HttpResponse<*>> 
 
 }
 
+@Produces
+@Singleton
+@Requires(classes = [java.lang.Exception::class, ExceptionHandler::class])
+class ExceptionNewHandler : ExceptionHandler<java.lang.Exception, HttpResponse<*>> {
+
+    override fun handle(request: HttpRequest<*>, exception: Exception): HttpResponse<*> {
+        print(exception)
+        return HttpResponse.serverError(exception.message)
+    }
+
+}
+
 data class  Error(val errorMessage : String,val errorCode:String)
 
 class DuplicateException(val errorMessage : String,val errorCode:String) : RuntimeException()

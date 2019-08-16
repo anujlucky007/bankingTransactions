@@ -3,10 +3,10 @@ package banking.dao.impl
 import banking.dao.AccountRepository
 import banking.model.Account
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession
+import io.micronaut.spring.tx.annotation.Transactional
 import javax.inject.Singleton
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
-import javax.transaction.Transactional
 import javax.validation.constraints.NotBlank
 
 @Singleton
@@ -17,7 +17,6 @@ open class AccountRepositoryImpl(@param:CurrentSession @field:PersistenceContext
     override fun findById(id: Long): Account? {
         return entityManager.find(Account::class.java, id)
     }
-
     @Transactional
     override fun save(account: Account): Account {
         entityManager.persist(account)

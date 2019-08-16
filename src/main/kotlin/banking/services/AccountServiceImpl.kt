@@ -12,7 +12,8 @@ import javax.inject.Singleton
 @Singleton
 open class AccountServiceImpl(private val lockService: LockService, private val exchangeService: ExchangeService, private val accountRepository: AccountRepository) : AccountService {
     override fun createAccount(accountCreationRequest: AccountDTO): AccountDTO {
-        val account= Account(id=0,baseCurrency = "INR",accountBalance = 0.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
+        val account= Account(id=0,baseCurrency = accountCreationRequest.baseCurrency,accountBalance = accountCreationRequest.accountBalance,
+                type = accountCreationRequest.accountType,status = AccountStatus.ACTIVE)
        val createdAccount= accountRepository.save(account)
         return accountCreationRequest.copy(accountNumber =createdAccount.id)
     }
