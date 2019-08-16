@@ -36,7 +36,12 @@ data class AccountTransaction(
         @Column(name = "amount", nullable = false)
         val amount : Double,
         @Column(name = "transactionType", nullable = false)
-        val transactionType:String,
+        val transactionType:AccountTransactionType,
         @ManyToOne
         val account:Account
 )
+
+enum class AccountTransactionType {
+        WITHDRAWAL,
+        DEPOSIT
+}

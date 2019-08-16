@@ -1,5 +1,6 @@
-package banking.dao
+package banking.dao.impl
 
+import banking.dao.AccountTransactionRepository
 import banking.model.AccountTransaction
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession
 import io.micronaut.runtime.ApplicationConfiguration
