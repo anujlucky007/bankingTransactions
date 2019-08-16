@@ -30,7 +30,7 @@ import javax.validation.Valid
 @Validated
 class AccountController(val accountService: AccountService) {
 
-    @Get("/{accountId}}")
+    @Get("/{accountId}")
     fun getAccount(accountId: Long): Account {
         return accountService.getAccountDetails(accountId)
     }

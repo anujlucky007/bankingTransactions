@@ -21,7 +21,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
     override fun getAccountDetails(accountNumber: Long): Account {
         val lockOnAccount=lockService.getLockOnAccount(accountNumber.toString())
         //directly fetch from db
-        val account=accountRepository.findById(accountNumber.toLong())
+        val account=accountRepository.findById(accountNumber)
 
         lockService.releaseLockOnAccount(lockOnAccount)
 

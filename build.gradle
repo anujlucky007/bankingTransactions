@@ -4,6 +4,7 @@ plugins {
     id "org.jetbrains.kotlin.plugin.allopen" version "1.3.21"
     id "com.github.johnrengelman.shadow" version "5.0.0"
     id "application"
+    id "org.jetbrains.kotlin.plugin.jpa" version "1.3.41"
 }
 
 
@@ -48,6 +49,7 @@ dependencies {
     compile 'io.micronaut.configuration:micronaut-hibernate-jpa'
     runtime 'com.h2database:h2'
     compile "io.micronaut.configuration:micronaut-jdbc-hikari"
+    compile "org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}"
 }
 
 test.classpath += configurations.developmentOnly
