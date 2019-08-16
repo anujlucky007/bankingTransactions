@@ -30,9 +30,9 @@ import javax.validation.Valid
 @Validated
 class AccountController(val accountService: AccountService) {
 
-    @Get("/{accountId}")
-    fun getAccount(accountId: Long): Account {
-        return accountService.getAccountDetails(accountId)
+    @Get("/{accountNumber}")
+    fun getAccount(accountNumber: Long): Account {
+        return accountService.getAccountDetails(accountNumber)
     }
 
     @Post("/create")

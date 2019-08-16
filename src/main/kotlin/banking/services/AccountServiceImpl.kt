@@ -8,7 +8,6 @@ import banking.dao.AccountTransactionRepository
 import banking.dto.*
 import banking.model.AccountStatus
 import banking.model.AccountTransaction
-import banking.model.AccountType
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -49,7 +48,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
                         ActivityType.DEPOSIT -> accountDetails.accountBalance + amount
                         ActivityType.WITHDRAW -> {
                             when {
-                                accountDetails.accountBalance < amount -> throw GenericException("", "OBB")
+                                accountDetails.accountBalance < amount -> throw GenericException("Account Balance low", "OBB.ACC.BALANCE")
                                 else -> accountDetails.accountBalance - amount
                                 }
                         }
@@ -61,11 +60,11 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
 
         }
         catch (ex:Exception){
-            return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = 0.0, status = ActivityStatus.ERROR)
+            return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = 0.0, status = ActivityStatus.ERROR,message = ex.message)
         }
         finally {
             lockService.releaseLockOnAccount(distributedAccountLock)
         }
-        return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = accountDetails!!.accountBalance, status = ActivityStatus.COMPLETED)
+        return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = accountDetails!!.accountBalance, status = ActivityStatus.COMPLETED,message = "")
     }
 }

@@ -38,7 +38,7 @@ class RequestValidationServiceTest{
     @Test
     fun `should return true on when requestId is not present in requestMap for account`() {
 
-        var lock = requestValidationService.validateRequest(1234,"tx1")
+        val lock = requestValidationService.validateRequest(1234,"tx1")
         lock shouldNotBe  null
         lock shouldBe true
     }
@@ -46,10 +46,12 @@ class RequestValidationServiceTest{
     @Test
     fun `should throw exception when requestId is duplicate for account Number`() {
 
-        var lock = requestValidationService.validateRequest(1234,"tx1")
+        val lock = requestValidationService.validateRequest(1234,"tx1")
         lock shouldNotBe  null
         lock shouldBe true
-        val exception=assertThrows(ValidationException::class.java) { requestValidationService.validateRequest(1234,"tx1") }
+        val exception=assertThrows(ValidationException::class.java) {
+            requestValidationService.validateRequest(1234,"tx1")
+        }
         exception.errorCode shouldBe "OBANK.002"
         exception.errorMessage shouldBe "Request Not Processed Something Went Wrong"
     }

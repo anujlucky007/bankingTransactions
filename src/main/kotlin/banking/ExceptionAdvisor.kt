@@ -57,4 +57,4 @@ data class  Error(val errorMessage : String,val errorCode:String)
 
 class DuplicateException(val errorMessage : String,val errorCode:String) : RuntimeException()
 class ValidationException(val errorMessage : String,val errorCode:String) : RuntimeException()
-class GenericException(val errorMessage : String,val errorCode:String) : RuntimeException()
+class GenericException(val errorMessage : String,val errorCode:String) : Exception(errorMessage)
