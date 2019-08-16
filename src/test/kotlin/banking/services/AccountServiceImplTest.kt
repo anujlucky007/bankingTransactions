@@ -153,6 +153,7 @@ class AccountServiceImplTest{
 
         actualAccountActivityResponse.accountNumber shouldBe account.id
         actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+        actualAccountActivityResponse.message shouldBe "Account Balance low"
 
         val actualAccount1=accountService.getAccountDetails(account.id)
         actualAccount1.accountBalance shouldBe 100.00
@@ -181,6 +182,8 @@ class AccountServiceImplTest{
 
         actualAccountActivityResponse.accountNumber shouldBe account.id
         actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+        actualAccountActivityResponse.message shouldBe "Account Balance low"
+
 
         val actualAccount1=accountService.getAccountDetails(account.id)
         actualAccount1.accountBalance shouldBe 100.00
@@ -195,6 +198,7 @@ class AccountServiceImplTest{
 
         actualAccountActivityResponse.accountNumber shouldBe account.id
         actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+        actualAccountActivityResponse.message shouldBe "Currency not supported"
 
         val actualAccount1=accountService.getAccountDetails(account.id)
         actualAccount1.accountBalance shouldBe 100.00

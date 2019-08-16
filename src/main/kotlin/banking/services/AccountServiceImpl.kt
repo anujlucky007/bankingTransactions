@@ -45,7 +45,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
         distributedAccountLock.lock(20,TimeUnit.SECONDS)
         try {
             accountDetails = fetchAccountDetails(accountActivityRequest.accountNumber)
-            val amountInAccountBaseCurrency = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails!!.baseCurrency, accountActivityRequest.transactionAmount.value)
+            val amountInAccountBaseCurrency = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails.baseCurrency, accountActivityRequest.transactionAmount.value)
             val updatedAccountBalance = getNewAccountBalance(accountActivityRequest, accountDetails, amountInAccountBaseCurrency)
             accountDetails.accountBalance=updatedAccountBalance
             val accountTransactional=AccountTransaction(transactionRemark = accountActivityRequest.activityRemark,transactionType = accountActivityRequest.activityType,amount = amountInAccountBaseCurrency,account =accountDetails)

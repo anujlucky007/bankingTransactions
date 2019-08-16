@@ -28,8 +28,7 @@ import javax.validation.Valid
 class TransactionController(val transactionService : TransactionService) {
 
     @Post("/{accountNumber}/transaction-request")
-    fun hello(accountNumber :String,@Body @Valid transactionRequest: TransactionRequest): String {
-        return "anuj"
-        //return transactionService.transact(accountNumber,transactionRequest)
+    fun hello(accountNumber :Long,@Body @Valid transactionRequest: TransactionRequest): String {
+        return transactionService.transact(accountNumber,transactionRequest)
     }
 }

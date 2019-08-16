@@ -39,7 +39,6 @@ class AccountController(val accountService: AccountService) {
 
     @Post("/create")
     fun createAccount(@Body @Valid account: AccountDTO): AccountDTO {
-
         return  accountService.createAccount(account)
     }
 
