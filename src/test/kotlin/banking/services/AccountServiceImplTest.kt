@@ -92,6 +92,17 @@ class AccountServiceImplTest{
     }
 
     @Test
+    fun `should mark Account activity request as ERROR when account number is not correct`(){
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = 1001010,activityRemark = "withdraw",transactionAmount = TransactionAmount(110.00,"UNKNOWN"),activityType = ActivityType.WITHDRAW)
+
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccountActivityResponse.accountNumber shouldBe 1001010
+        actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+    }
+
+    @Test
     fun `should deposit amount in account return update Account balance if currency is same`(){
 
         val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "Deposit",transactionAmount = TransactionAmount(1000.00,"INR"),activityType = ActivityType.DEPOSIT)

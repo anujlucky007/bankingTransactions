@@ -23,13 +23,17 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
     }
 
     override fun getAccountDetails(accountNumber: Long): Account {
-        val lockOnAccount=lockService.getLockOnAccount(accountNumber.toString())
-        val account=accountRepository.findById(accountNumber)
-        lockService.releaseLockOnAccount(lockOnAccount)
-        if(account==null){
-            throw GenericException("Account Not Found","ACC.INVALID.001")
-        }
-        return account
+        return fetchAccountDetails(accountNumber)
+
+    }
+
+    private fun fetchAccountDetails(accountNumber: Long): Account {
+        return accountRepository.findById(accountNumber) ?: throw GenericException("Account Not Found","ACC.INVALID.001")
+
+    }
+
+    private fun fetchAccountTransactionDetails(accountNumber: Long): List<AccountTransaction> {
+        return accountTransactionRepository.findTransactionsOfAccount(accountNumber)
 
     }
 
@@ -40,7 +44,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
         val distributedAccountLock=lockService.getLockOnAccount(accountActivityRequest.accountNumber.toString())
         distributedAccountLock.lock(20,TimeUnit.SECONDS)
         try {
-            accountDetails = accountRepository.findById(accountActivityRequest.accountNumber)
+            accountDetails = fetchAccountDetails(accountActivityRequest.accountNumber)
             val amountInAccountBaseCurrency = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails!!.baseCurrency, accountActivityRequest.transactionAmount.value)
             val updatedAccountBalance = getNewAccountBalance(accountActivityRequest, accountDetails, amountInAccountBaseCurrency)
             accountDetails.accountBalance=updatedAccountBalance

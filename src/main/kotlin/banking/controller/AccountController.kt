@@ -16,6 +16,8 @@
 package banking.controller
 
 
+import banking.dto.AccountActivityRequest
+import banking.dto.AccountActivityResponse
 import banking.dto.AccountDTO
 import banking.model.Account
 import banking.services.AccountService
@@ -41,9 +43,8 @@ class AccountController(val accountService: AccountService) {
         return  accountService.createAccount(account)
     }
 
-    @Post("/addBalance")
-    fun addBalanceAccount(@Body @Valid account: AccountDTO): AccountDTO {
-
-        return  accountService.createAccount(account)
+    @Post("/transact")
+    fun accountTransaction(@Body @Valid account: AccountActivityRequest): AccountActivityResponse {
+        return  accountService.doAccountActivity(account)
     }
 }
