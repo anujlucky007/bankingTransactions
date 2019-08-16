@@ -51,7 +51,6 @@ dependencies {
     runtime 'com.h2database:h2'
     compile "io.micronaut.configuration:micronaut-jdbc-hikari"
     compile "org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}"
-    testCompile "io.micronaut.test:micronaut-test-spock:1.1.0"
 }
 
 test.classpath += configurations.developmentOnly
