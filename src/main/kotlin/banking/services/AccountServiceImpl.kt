@@ -41,23 +41,12 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
         distributedAccountLock.lock(20,TimeUnit.SECONDS)
         try {
             accountDetails = accountRepository.findById(accountActivityRequest.accountNumber)
-
-            val amount = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails!!.baseCurrency, accountActivityRequest.transactionAmount.value)
-            val updatedAccountBalance =
-                    when (accountActivityRequest.activityType) {
-                        ActivityType.DEPOSIT -> accountDetails.accountBalance + amount
-                        ActivityType.WITHDRAW -> {
-                            when {
-                                accountDetails.accountBalance < amount -> throw GenericException("Account Balance low", "OBB.ACC.BALANCE")
-                                else -> accountDetails.accountBalance - amount
-                                }
-                        }
-                    }
+            val amountInAccountBaseCurrency = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails!!.baseCurrency, accountActivityRequest.transactionAmount.value)
+            val updatedAccountBalance = getNewAccountBalance(accountActivityRequest, accountDetails, amountInAccountBaseCurrency)
             accountDetails.accountBalance=updatedAccountBalance
-            val accountTransactional=AccountTransaction(transactionRemark = accountActivityRequest.activityRemark,transactionType = accountActivityRequest.activityType,amount = amount,account =accountDetails)
+            val accountTransactional=AccountTransaction(transactionRemark = accountActivityRequest.activityRemark,transactionType = accountActivityRequest.activityType,amount = amountInAccountBaseCurrency,account =accountDetails)
             accountRepository.updateBalance(accountDetails.id,accountDetails)
-            val accountTransaction=accountTransactionRepository.save(accountTransactional)
-
+            accountTransactionRepository.save(accountTransactional)
         }
         catch (ex:Exception){
             return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = 0.0, status = ActivityStatus.ERROR,message = ex.message)
@@ -66,5 +55,17 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
             lockService.releaseLockOnAccount(distributedAccountLock)
         }
         return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = accountDetails!!.accountBalance, status = ActivityStatus.COMPLETED,message = "")
+    }
+
+    private fun getNewAccountBalance(accountActivityRequest: AccountActivityRequest, accountDetails: Account, amount: Double): Double {
+        return when (accountActivityRequest.activityType) {
+            ActivityType.DEPOSIT -> accountDetails.accountBalance + amount
+            ActivityType.WITHDRAW -> {
+                when {
+                    accountDetails.accountBalance < amount -> throw GenericException("Account Balance low", "OBB.ACC.BALANCE")
+                    else -> accountDetails.accountBalance - amount
+                }
+            }
+        }
     }
 }
