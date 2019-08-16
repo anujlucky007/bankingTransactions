@@ -1,7 +1,7 @@
-package example.services
+package banking.services
 
 import banking.model.TransactionRequest
-import example.client.ApplicationRedissonClient
+import banking.client.ApplicationRedissonClient
 import org.redisson.api.RLock
 import org.redisson.api.RMap
 import javax.inject.Singleton
@@ -23,7 +23,7 @@ class LockService(val applicationRedissonClient: ApplicationRedissonClient) {
 
     fun  getLockOnAccount(accountNumber:String) : RLock {
 
-        val requestMap= applicationRedissonClient.getRedissonClient().getMap<String, Object>("accountMap")
+        val requestMap= applicationRedissonClient.getRedissonClient().getMap<String, Any>("accountMap")
         if(!requestMap.containsKey(accountNumber)){
             val lockObject=Object()
             requestMap.fastPutIfAbsent(accountNumber,lockObject)

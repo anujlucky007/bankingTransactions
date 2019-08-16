@@ -1,6 +1,7 @@
-package example.services
+package banking.services
 
-import example.client.ApplicationRedissonClient
+import banking.client.ApplicationRedissonClient
+import banking.services.LockService
 import io.kotlintest.matchers.instanceOf
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe

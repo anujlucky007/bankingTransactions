@@ -1,7 +1,9 @@
-package example.services
+package banking.services
 
-import example.ValidationException
-import example.client.ApplicationRedissonClient
+import banking.ValidationException
+import banking.client.ApplicationRedissonClient
+import banking.services.LockService
+import banking.services.RequestValidationService
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.mockk.every

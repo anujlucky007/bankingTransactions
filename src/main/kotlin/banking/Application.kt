@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package banking.controller
+package banking
 
-import banking.model.TransactionRequest
-import banking.services.TransactionService
-import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Post
+import io.micronaut.runtime.Micronaut
+import redis.embedded.RedisServer
 
-@Controller("/transaction")
-class TransactionController(val transactionService : TransactionService) {
+object Application {
 
-    @Post("/{accountNumber}/transaction-request")
-    fun hello(accountNumber :Int,transactionRequest: TransactionRequest): String {
-        return transactionService.transact(accountNumber,transactionRequest)
+    @JvmStatic
+    fun main(args: Array<String>) {
+
+        val redisServer = RedisServer(6379)
+        redisServer.start()
+
+        println(" rediss server started " + redisServer.isActive + redisServer.ports())
+        Micronaut.build()
+                .packages("example")
+                .mainClass(Application.javaClass)
+                .start()
     }
 }
+
+

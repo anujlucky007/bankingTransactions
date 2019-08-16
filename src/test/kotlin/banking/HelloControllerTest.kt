@@ -1,4 +1,4 @@
-package example
+package banking
 
 import io.micronaut.test.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions.assertEquals

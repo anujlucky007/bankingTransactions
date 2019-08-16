@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package example.controller
+package banking.controller
 
-
-import banking.model.Account
-import example.GreetingService
+import banking.model.TransactionRequest
+import banking.services.TransactionService
 import io.micronaut.http.annotation.Controller
-import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Post
 
-@Controller("/account")
-class AccountController() {
+@Controller("/transaction")
+class TransactionController(val transactionService : TransactionService) {
 
-    @Get("/{accountId}}")
-    fun getAccount(accountId: String): Account {
-        return Account("","",12.0,0.0, emptyList())
+    @Post("/{accountNumber}/transaction-request")
+    fun hello(accountNumber :Long,transactionRequest: TransactionRequest): String {
+        return transactionService.transact(accountNumber,transactionRequest)
     }
 }

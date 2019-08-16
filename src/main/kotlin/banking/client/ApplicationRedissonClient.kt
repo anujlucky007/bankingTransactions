@@ -1,4 +1,4 @@
-package example.client
+package banking.client
 
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient

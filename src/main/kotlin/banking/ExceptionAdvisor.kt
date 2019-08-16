@@ -1,4 +1,4 @@
-package example
+package banking
 
 import io.micronaut.context.annotation.Requires
 import io.micronaut.http.HttpRequest
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class OutOfStockExceptionHandler : ExceptionHandler<DuplicateException, HttpResponse<*>> {
 
     override fun handle(request: HttpRequest<*>, exception: DuplicateException): HttpResponse<*> {
-        return HttpResponse.badRequest(Error(exception.errorMessage,exception.errorCode))
+        return HttpResponse.badRequest(Error(exception.errorMessage, exception.errorCode))
     }
 
 }

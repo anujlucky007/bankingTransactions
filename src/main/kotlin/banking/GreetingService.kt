@@ -1,4 +1,4 @@
-package example
+package banking
 
 import javax.inject.Singleton
 

@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package example
+package banking.controller
 
-import io.micronaut.runtime.Micronaut
-import redis.embedded.RedisServer
 
-object Application {
+import banking.model.Account
+import banking.GreetingService
+import banking.model.AccountStatus
+import banking.model.AccountType
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
 
-    @JvmStatic
-    fun main(args: Array<String>) {
+@Controller("/account")
+class AccountController() {
 
-        val redisServer = RedisServer(6379)
-        redisServer.start()
-
-        println(" rediss server started " + redisServer.isActive + redisServer.ports())
-        Micronaut.build()
-                .packages("example")
-                .mainClass(Application.javaClass)
-                .start()
+    @Get("/{accountId}}")
+    fun getAccount(accountId: String): Account {
+        return Account()
     }
 }
-
-

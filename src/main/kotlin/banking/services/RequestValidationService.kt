@@ -1,7 +1,7 @@
-package example.services
+package banking.services
 
-import example.DuplicateException
-import example.ValidationException
+import banking.DuplicateException
+import banking.ValidationException
 import java.lang.Exception
 import javax.inject.Singleton
 
@@ -9,7 +9,7 @@ import javax.inject.Singleton
 class RequestValidationService(var lockService: LockService) {
 
 
-    fun validateRequest(accountNumber: Int, transactionRequestId: String) : Boolean {
+    fun validateRequest(accountNumber: Long, transactionRequestId: String) : Boolean {
         var lockMapPair = lockService.getLockOnRequestForAccount(accountNumber = accountNumber.toString())
         lockMapPair.first.lock()
         try {

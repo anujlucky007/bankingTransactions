@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package example
+package banking
 
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
