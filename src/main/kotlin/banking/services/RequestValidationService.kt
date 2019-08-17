@@ -22,7 +22,7 @@ class RequestValidationService(var lockService: LockService) {
             }
         }
         catch (exception : Exception){
-            throw ValidationException("Request Not Processed Something Went Wrong", "OBANK.002")
+            throw ValidationException("Duplicate Request", "OBANK.DUPLICATE.002")
         }
         finally {
             lockMapPair.first.unlock()

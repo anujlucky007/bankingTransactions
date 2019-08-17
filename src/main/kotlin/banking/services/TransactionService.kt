@@ -55,14 +55,14 @@ class TransactionService(var requestValidationService: RequestValidationService,
                     return when {
                         accountCreditActivityResponse.status == ActivityStatus.ERROR -> {
                             reverseTransaction(accountNumber, transactionRequest)
-                            updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "Reverse Transaction",status = TransactionActivityStatus.FAILED)
+                            updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "Creditor : ${accountCreditActivityResponse.message} : Reverse Transaction",status = TransactionActivityStatus.FAILED)
                         }
-                        else -> updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "",status = TransactionActivityStatus.COMPLETED)
+                        else -> updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = transactionRequest.description,status = TransactionActivityStatus.COMPLETED)
                     }
 
                 }
                 accountDebitActivityResponse.status == ActivityStatus.ERROR -> {
-                    return updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = accountDebitActivityResponse.message!!,status = TransactionActivityStatus.FAILED)
+                    return updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "Debitor : "+accountDebitActivityResponse.message!!,status = TransactionActivityStatus.FAILED)
 
                 }
             }

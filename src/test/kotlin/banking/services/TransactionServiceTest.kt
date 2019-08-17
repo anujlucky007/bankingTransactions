@@ -1,12 +1,21 @@
 package banking.services
 
+import banking.ValidationException
 import banking.dao.impl.AccountRepositoryImpl
+import banking.dto.Creditor
+import banking.dto.TransactionActivityStatus
+import banking.dto.TransactionRequest
+import banking.dto.Value
 import banking.model.Account
 import banking.model.AccountStatus
 import banking.model.AccountType
+import io.kotlintest.shouldBe
+import io.kotlintest.shouldNot
+import io.kotlintest.shouldNotBe
 import io.micronaut.test.annotation.MicronautTest
 import org.junit.jupiter.api.*
 import redis.embedded.RedisServer
+import java.lang.Exception
 import javax.inject.Inject
 
 @MicronautTest
@@ -28,12 +37,6 @@ class TransactionServiceTest{
         redisServer = RedisServer(6379)
         redisServer.start()
 
-        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
-        account=accountRepository.save(accountOne)
-
-        val accountTwo= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
-        account=accountRepository.save(accountTwo)
-
     }
 
     @AfterAll
@@ -42,7 +45,146 @@ class TransactionServiceTest{
     }
 
     @Test
-    fun `check`(){
+    fun `should transfer from one account to another when both accounts currency is same`(){
+
+        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountOne)
+
+        val accountTwo= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountTwo)
+
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                value = Value(50.0, "INR"), description = "Flat rent")
+
+        val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
+
+        transactionResult.id shouldNotBe  null
+        transactionResult.status shouldBe TransactionActivityStatus.COMPLETED
+        transactionResult.message shouldBe "Flat rent"
+        transactionResult.value shouldBe Value(50.0,"INR")
+
+        val accountOneUpdated=accountRepository.findById(accountOne.id)
+        accountOneUpdated!!.accountBalance shouldBe 50.0
+
+        val accountTwoUpdated=accountRepository.findById(accountTwo.id)
+        accountTwoUpdated!!.accountBalance shouldBe 150.0
+
+    }
+
+    @Test
+    fun `should throw exception when same request is sent again for transaction from an account`(){
+
+        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountOne)
+
+        val accountTwo= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountTwo)
+
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                value = Value(50.0, "INR"), description = "Flat rent")
+
+       transactionService.transactIntraBank(accountOne.id, transactionRequest)
+
+        val transactionException= Assertions.assertThrows(ValidationException::class.java) {
+            transactionService.transactIntraBank(accountOne.id, transactionRequest)
+        }
+
+        transactionException.errorMessage shouldBe  "Duplicate Request"
+        transactionException.errorCode shouldBe "OBANK.DUPLICATE.002"
+
+        val accountOneUpdated=accountRepository.findById(accountOne.id)
+        accountOneUpdated!!.accountBalance shouldBe 50.0
+
+        val accountTwoUpdated=accountRepository.findById(accountTwo.id)
+        accountTwoUpdated!!.accountBalance shouldBe 150.0
+
+    }
+
+
+    @Test
+    fun `should transfer from one account to another when both accounts currency is INR but requested transaction is in USD `(){
+
+        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountOne)
+
+        val accountTwo= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountTwo)
+
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                value = Value(1.0, "USD"), description = "Flat rent")
+
+        val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
+
+        transactionResult.id shouldNotBe  null
+        transactionResult.status shouldBe TransactionActivityStatus.COMPLETED
+        transactionResult.message shouldBe "Flat rent"
+        transactionResult.value shouldBe Value(1.0,"USD")
+
+        val accountOneUpdated=accountRepository.findById(accountOne.id)
+        accountOneUpdated!!.accountBalance shouldBe 30.0
+
+        val accountTwoUpdated=accountRepository.findById(accountTwo.id)
+        accountTwoUpdated!!.accountBalance shouldBe 170.0
+
+    }
+
+    @Test
+    fun `should  give failed transfer status from one account to another when amount in debitor is low `(){
+
+        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountOne)
+
+        val accountTwo= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountTwo)
+
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                value = Value(1000.0, "INR"), description = "Flat rent")
+
+        val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
+
+        transactionResult.id shouldNotBe  null
+        transactionResult.status shouldBe TransactionActivityStatus.FAILED
+        transactionResult.message shouldBe "Debitor : Account Balance low"
+        transactionResult.value shouldBe Value(1000.0,"INR")
+
+        val accountOneUpdated=accountRepository.findById(accountOne.id)
+        accountOneUpdated!!.accountBalance shouldBe 100.0
+
+        val accountTwoUpdated=accountRepository.findById(accountTwo.id)
+        accountTwoUpdated!!.accountBalance shouldBe 100.0
+
+    }
+
+    @Test
+    fun `should  give failed transfer status from one account to another when problem with crediting amount`(){
+
+        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountOne)
+
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = 1000),
+                value = Value(100.0, "INR"), description = "Flat rent")
+
+        val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
+
+        transactionResult.id shouldNotBe  null
+        transactionResult.status shouldBe TransactionActivityStatus.FAILED
+        transactionResult.message shouldBe "Creditor : Account Not Found : Reverse Transaction"
+        transactionResult.value shouldBe Value(100.0,"INR")
+
+        val accountOneUpdated=accountRepository.findById(accountOne.id)
+        accountOneUpdated!!.accountBalance shouldBe 100.0
+
+        //TODO fetch account transaction and verify
 
     }
 
