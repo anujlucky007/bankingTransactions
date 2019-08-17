@@ -36,7 +36,7 @@ class TransactionController(val transactionService : TransactionService) {
     }
 
 
-    @Get("/{transactionId}")
+    @Get("/{transactionId}/status")
     fun getTransactionStatus(transactionId : UUID): TransactionResponse {
         return transactionService.getTransactionStatus(transactionId)
     }

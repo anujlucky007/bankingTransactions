@@ -33,12 +33,12 @@ class TransactionService(var requestValidationService: RequestValidationService,
     fun transactIntraBank(accountNumber: Long, transactionRequest: TransactionRequest): TransactionResponse {
 
         requestValidationService.validateRequest(accountNumber, transactionRequest.requestId)
-
+        // same account transactions
         var createCustomerTransaction = createNewCustomerTransaction(transactionRequest, accountNumber)
 
         val accountWithdrawalActivityRequest = AccountActivityRequest(accountNumber = accountNumber,
                 transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
-                activityRemark = "",
+                activityRemark = "${ActivityType.WITHDRAW} for depositing in account ${transactionRequest.creditor.accountNumber}",
                 activityType = ActivityType.WITHDRAW)
 
         try {
@@ -48,7 +48,7 @@ class TransactionService(var requestValidationService: RequestValidationService,
                 accountDebitActivityResponse.status == ActivityStatus.COMPLETED -> {
                     val accountDepositActivityRequest = AccountActivityRequest(accountNumber = transactionRequest.creditor.accountNumber,
                             transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
-                            activityRemark = "",
+                            activityRemark = "${ActivityType.DEPOSIT} from account ${accountNumber}",
                             activityType = ActivityType.DEPOSIT)
 
                     val accountCreditActivityResponse=accountService.doAccountActivity(accountDepositActivityRequest)

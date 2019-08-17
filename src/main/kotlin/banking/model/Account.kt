@@ -2,6 +2,7 @@ package banking.model
 
 
 import banking.dto.ActivityType
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 @Entity
@@ -39,6 +40,7 @@ data class AccountTransaction(
         val amount : Double,
         @Column(name = "transactionType", nullable = false)
         val transactionType: ActivityType,
+        @JsonIgnore
         @ManyToOne
         val account:Account
 )

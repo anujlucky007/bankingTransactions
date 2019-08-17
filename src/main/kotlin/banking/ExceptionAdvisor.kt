@@ -31,6 +31,18 @@ class ExceptionHandler : ExceptionHandler<ValidationException, HttpResponse<*>> 
 
 @Produces
 @Singleton
+@Requires(classes = [GenericException::class, ExceptionHandler::class])
+class GenericExceptionHandler : ExceptionHandler<GenericException, HttpResponse<*>> {
+
+    override fun handle(request: HttpRequest<*>, exception: GenericException): HttpResponse<*> {
+        print(exception)
+        return HttpResponse.badRequest(Error(exception.errorMessage, exception.errorCode))
+    }
+
+}
+
+@Produces
+@Singleton
 @Requires(classes = [java.lang.Exception::class, ExceptionHandler::class])
 class ExceptionNewHandler : ExceptionHandler<java.lang.Exception, HttpResponse<*>> {
 
@@ -41,18 +53,6 @@ class ExceptionNewHandler : ExceptionHandler<java.lang.Exception, HttpResponse<*
 
 }
 
-
-@Produces
-@Singleton
-@Requires(classes = [GenericException::class, ExceptionHandler::class])
-class GenericExceptionHandler : ExceptionHandler<GenericException, HttpResponse<*>> {
-
-    override fun handle(request: HttpRequest<*>, exception: GenericException): HttpResponse<*> {
-        print(exception)
-        return HttpResponse.badRequest(Error(exception.errorMessage, exception.errorCode))
-    }
-
-}
 data class  Error(val errorMessage : String,val errorCode:String)
 
 class DuplicateException(val errorMessage : String,val errorCode:String) : RuntimeException()
