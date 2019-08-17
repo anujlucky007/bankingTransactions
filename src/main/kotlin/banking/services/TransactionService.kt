@@ -28,6 +28,7 @@ class TransactionService(var requestValidationService: RequestValidationService,
     fun transactInterBankAccount(accountNumber: Long, transactionRequest: TransactionRequest):TransactionResponse{
         //TODO  implementation of interbanking transaction
         // can use transactIntraBank to submit amount in pool account and then API Integration for bank transfer
+        print("$accountNumber $transactionRequest")
         return TransactionResponse(id = UUID.randomUUID(),status = TransactionActivityStatus.ERROR,message = "FUNCTIONALITY NOT SUPPORTED",value = Value(0.0,"XYZ"))
     }
 
