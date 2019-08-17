@@ -12,8 +12,16 @@ import javax.persistence.PersistenceContext
 @Singleton
 open class AccountTransactionRepositoryImpl(@param:CurrentSession @field:PersistenceContext
                           private val entityManager: EntityManager) : AccountTransactionRepository {
+
+    @Transactional(readOnly = true)
     override fun findTransactionsOfAccount(accountNumber: Long): List<AccountTransaction> {
-        return listOf()
+
+        var qlString = "SELECT g FROM AccountTransaction as g where account_id = :accountNumber"
+
+        val query = entityManager.createQuery(qlString, AccountTransaction::class.java)
+                .setParameter("accountNumber" ,accountNumber)
+
+        return query.resultList
     }
 
     @Transactional(readOnly = true)

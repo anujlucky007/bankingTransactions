@@ -22,8 +22,12 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
         return accountCreationRequest.copy(accountNumber =createdAccount.id)
     }
 
-    override fun getAccountDetails(accountNumber: Long): Account {
-        return fetchAccountDetails(accountNumber)
+    override fun getAccountDetails(accountNumber: Long): AccountDTO {
+
+       val accountTransactions= accountTransactionRepository.findTransactionsOfAccount(accountNumber)
+        val accountDetails=fetchAccountDetails(accountNumber)
+        return AccountDTO(accountNumber= accountDetails.id,customerName=accountDetails.customerName,accountBalance = accountDetails.accountBalance
+                ,baseCurrency = accountDetails.baseCurrency,accountType = accountDetails.type,status = accountDetails.status,accountTransaction =accountTransactions)
 
     }
 

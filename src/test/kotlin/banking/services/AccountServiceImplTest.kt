@@ -57,7 +57,7 @@ class AccountServiceImplTest{
 
         val actualAccount=accountService.getAccountDetails(account.id)
 
-        actualAccount.id shouldBe account.id
+        actualAccount.accountNumber shouldBe account.id
         actualAccount.accountBalance shouldBe 100.00
 
 

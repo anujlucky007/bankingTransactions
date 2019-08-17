@@ -28,6 +28,9 @@ class TransactionServiceTest{
     @Inject
     lateinit var accountRepository: AccountRepositoryImpl
 
+    @Inject
+    lateinit var accountService: AccountServiceImpl
+
     lateinit var  account : Account
 
     lateinit  var redisServer : RedisServer
@@ -65,11 +68,13 @@ class TransactionServiceTest{
         transactionResult.message shouldBe "Flat rent"
         transactionResult.value shouldBe Value(50.0,"INR")
 
-        val accountOneUpdated=accountRepository.findById(accountOne.id)
-        accountOneUpdated!!.accountBalance shouldBe 50.0
+        val accountOneUpdated=accountService.getAccountDetails(accountOne.id)
+        accountOneUpdated.accountBalance shouldBe 50.0
+        accountOneUpdated.accountTransaction.size shouldBe 1
 
-        val accountTwoUpdated=accountRepository.findById(accountTwo.id)
-        accountTwoUpdated!!.accountBalance shouldBe 150.0
+        val accountTwoUpdated=accountService.getAccountDetails(accountTwo.id)
+        accountTwoUpdated.accountBalance shouldBe 150.0
+        accountTwoUpdated.accountTransaction.size shouldBe 1
 
     }
 
@@ -126,11 +131,13 @@ class TransactionServiceTest{
         transactionResult.message shouldBe "Flat rent"
         transactionResult.value shouldBe Value(1.0,"USD")
 
-        val accountOneUpdated=accountRepository.findById(accountOne.id)
-        accountOneUpdated!!.accountBalance shouldBe 30.0
+        val accountOneUpdated=accountService.getAccountDetails(accountOne.id)
+        accountOneUpdated.accountBalance shouldBe 30.0
+        accountOneUpdated.accountTransaction.size shouldBe 1
 
-        val accountTwoUpdated=accountRepository.findById(accountTwo.id)
-        accountTwoUpdated!!.accountBalance shouldBe 170.0
+        val accountTwoUpdated=accountService.getAccountDetails(accountTwo.id)
+        accountTwoUpdated.accountBalance shouldBe 170.0
+        accountTwoUpdated.accountTransaction.size shouldBe 1
 
     }
 
@@ -155,11 +162,13 @@ class TransactionServiceTest{
         transactionResult.message shouldBe "Debitor : Account Balance low"
         transactionResult.value shouldBe Value(1000.0,"INR")
 
-        val accountOneUpdated=accountRepository.findById(accountOne.id)
-        accountOneUpdated!!.accountBalance shouldBe 100.0
+        val accountOneUpdated=accountService.getAccountDetails(accountOne.id)
+        accountOneUpdated.accountBalance shouldBe 100.0
+        accountOneUpdated.accountTransaction.size shouldBe 0
 
-        val accountTwoUpdated=accountRepository.findById(accountTwo.id)
-        accountTwoUpdated!!.accountBalance shouldBe 100.0
+        val accountTwoUpdated=accountService.getAccountDetails(accountTwo.id)
+        accountTwoUpdated.accountBalance shouldBe 100.0
+        accountOneUpdated.accountTransaction.size shouldBe 0
 
     }
 
@@ -181,8 +190,11 @@ class TransactionServiceTest{
         transactionResult.message shouldBe "Creditor : Account Not Found : Reverse Transaction"
         transactionResult.value shouldBe Value(100.0,"INR")
 
-        val accountOneUpdated=accountRepository.findById(accountOne.id)
-        accountOneUpdated!!.accountBalance shouldBe 100.0
+        val accountOneUpdated=accountService.getAccountDetails(accountOne.id)
+        accountOneUpdated.accountBalance shouldBe 100.0
+        accountOneUpdated.accountTransaction.size shouldBe 2
+
+
 
         //TODO fetch account transaction and verify
 

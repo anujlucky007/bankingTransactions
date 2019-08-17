@@ -21,6 +21,7 @@ import banking.dto.AccountActivityResponse
 import banking.dto.AccountDTO
 import banking.model.Account
 import banking.services.AccountService
+import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -33,11 +34,11 @@ import javax.validation.Valid
 class AccountController(val accountService: AccountService) {
 
     @Get("/{accountNumber}")
-    fun getAccount(accountNumber: Long): Account {
+    fun getAccount(accountNumber: Long): AccountDTO {
         return accountService.getAccountDetails(accountNumber)
     }
 
-    @Post("/create")
+    @Post("/create",consumes = [MediaType.APPLICATION_JSON])
     fun createAccount(@Body @Valid account: AccountDTO): AccountDTO {
         return  accountService.createAccount(account)
     }

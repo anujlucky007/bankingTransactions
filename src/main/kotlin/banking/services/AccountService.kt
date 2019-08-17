@@ -8,7 +8,7 @@ import banking.model.Account
 
 interface AccountService{
 
-    fun getAccountDetails(accountNumber: Long): Account
+    fun getAccountDetails(accountNumber: Long): AccountDTO
 
     fun doAccountActivity(accountActivityRequest: AccountActivityRequest): AccountActivityResponse
 
