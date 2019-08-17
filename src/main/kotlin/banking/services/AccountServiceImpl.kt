@@ -1,6 +1,7 @@
 package banking.services
 
 import banking.GenericException
+import banking.NotExistsException
 import banking.model.Account
 import io.micronaut.spring.tx.annotation.Transactional
 import banking.dao.AccountRepository
@@ -8,6 +9,7 @@ import banking.dao.AccountTransactionRepository
 import banking.dto.*
 import banking.model.AccountStatus
 import banking.model.AccountTransaction
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import javax.inject.Singleton
@@ -36,7 +38,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
     }
 
     private fun fetchAccountDetails(accountNumber: Long): Account {
-        return accountRepository.findById(accountNumber) ?: throw GenericException("Account Not Found","ACC.INVALID.001")
+        return accountRepository.findById(accountNumber) ?: throw NotExistsException("Account Not Found","ACC.INVALID.001")
 
     }
 
@@ -59,6 +61,9 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
             val accountTransactional=AccountTransaction(transactionRemark = accountActivityRequest.activityRemark,transactionType = accountActivityRequest.activityType,amount = amountInAccountBaseCurrency,account =accountDetails)
             accountRepository.updateAccount(accountDetails)
             accountTransactionRepository.save(accountTransactional)
+        }
+        catch (ex:NotExistsException){
+            return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = 0.0, status = ActivityStatus.ERROR,message = ex.errorMessage)
         }
         catch (ex:Exception){
             return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = 0.0, status = ActivityStatus.ERROR,message = ex.message)

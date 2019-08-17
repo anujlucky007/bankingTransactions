@@ -1,6 +1,7 @@
 package banking.services
 
 import banking.GenericException
+import banking.NotExistsException
 import banking.ValidationException
 import banking.dao.impl.AccountRepositoryImpl
 import banking.dto.Creditor
@@ -295,7 +296,7 @@ class TransactionServiceTest{
     @Test
     fun `should  throw exception  transaction is not Found`(){
 
-        val transactionException=Assertions.assertThrows(GenericException::class.java) {
+        val transactionException=Assertions.assertThrows(NotExistsException::class.java) {
             transactionService.getTransactionStatus(UUID.randomUUID())
         }
 

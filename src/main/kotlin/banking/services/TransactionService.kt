@@ -1,6 +1,7 @@
 package banking.services
 
 import banking.GenericException
+import banking.NotExistsException
 import banking.ValidationException
 import banking.dao.CustomerTransactionRepository
 import banking.dto.*
@@ -15,7 +16,7 @@ import javax.management.ValueExp
 class TransactionService(var requestValidationService: RequestValidationService, private val accountService: AccountServiceImpl,val customerTransactionRepository: CustomerTransactionRepository) {
 
     fun getTransactionStatus(id: UUID) :TransactionResponse {
-        val customerTransaction= customerTransactionRepository.findById(id) ?: throw GenericException("Transaction Not found","OBB.TRANSACTION.NOTFOUND")
+        val customerTransaction= customerTransactionRepository.findById(id) ?: throw NotExistsException("Transaction Not found","OBB.TRANSACTION.NOTFOUND")
 
         return TransactionResponse(
                 id=customerTransaction.id!!,

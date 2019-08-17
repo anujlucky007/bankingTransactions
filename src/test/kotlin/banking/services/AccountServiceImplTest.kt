@@ -1,6 +1,7 @@
 package banking.services
 
 import banking.GenericException
+import banking.NotExistsException
 import banking.ValidationException
 import banking.client.ApplicationRedissonClient
 import banking.dao.impl.AccountRepositoryImpl
@@ -66,7 +67,7 @@ class AccountServiceImplTest{
     @Test
     fun `should throw exception if  details of User Account is not present in DB`(){
 
-        val actualException= Assertions.assertThrows(GenericException::class.java) {
+        val actualException= Assertions.assertThrows(NotExistsException::class.java) {
             accountService.getAccountDetails(202)
         }
         actualException.errorCode shouldBe "ACC.INVALID.001"

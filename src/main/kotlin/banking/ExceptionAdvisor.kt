@@ -20,6 +20,17 @@ class OutOfStockExceptionHandler : ExceptionHandler<DuplicateException, HttpResp
 
 @Produces
 @Singleton
+@Requires(classes = [NotExistsException::class, ExceptionHandler::class])
+class NotExistsExceptionHandler : ExceptionHandler<NotExistsException, HttpResponse<*>> {
+
+    override fun handle(request: HttpRequest<*>, exception: NotExistsException): HttpResponse<*> {
+        return HttpResponse.notFound(Error(exception.errorMessage, exception.errorCode))
+    }
+
+}
+
+@Produces
+@Singleton
 @Requires(classes = [ValidationException::class, ExceptionHandler::class])
 class ExceptionHandler : ExceptionHandler<ValidationException, HttpResponse<*>> {
 
@@ -48,7 +59,7 @@ class ExceptionNewHandler : ExceptionHandler<java.lang.Exception, HttpResponse<*
 
     override fun handle(request: HttpRequest<*>, exception: Exception): HttpResponse<*> {
         print(exception)
-        return HttpResponse.serverError(exception.message)
+        return HttpResponse.badRequest("Bad Request")
     }
 
 }
@@ -56,5 +67,6 @@ class ExceptionNewHandler : ExceptionHandler<java.lang.Exception, HttpResponse<*
 data class  Error(val errorMessage : String,val errorCode:String)
 
 class DuplicateException(val errorMessage : String,val errorCode:String) : RuntimeException()
+class NotExistsException(val errorMessage : String,val errorCode:String) : RuntimeException()
 class ValidationException(val errorMessage : String,val errorCode:String) : RuntimeException()
 class GenericException(val errorMessage : String,val errorCode:String) : Exception(errorMessage)

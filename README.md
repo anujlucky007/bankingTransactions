@@ -9,8 +9,8 @@
 - Build Tool : **Gradle**
 - For Unit test and Api test Micronaut Test  
 
-## How To Use
- Run application using  
+## How To Run Application
+ Run application using following command 
  - gradle clean build
  - gradle run
  - Use Postman collection present in git root folder
@@ -21,7 +21,7 @@
  - lsof -i:6379
  - kill -9 PID 
 
-##HLD
+## HLD
 
 ![Image of Yaktocat](
 diagram.jpg)

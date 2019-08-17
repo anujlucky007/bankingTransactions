@@ -75,7 +75,7 @@ class AccountControllerTest {
 
         val responseBody = accountFetchingException.response.body() as Map<String, String>
         accountFetchingException shouldNotBe null
-        accountFetchingException.status shouldBe HttpStatus.BAD_REQUEST
+        accountFetchingException.status shouldBe HttpStatus.NOT_FOUND
         responseBody["errorCode"] shouldBe "ACC.INVALID.001"
         responseBody["errorMessage"] shouldBe "Account Not Found"
     }
