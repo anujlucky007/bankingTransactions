@@ -3,6 +3,8 @@ package banking.model
 
 import banking.dto.ActivityType
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.annotations.GenericGenerator
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -32,8 +34,9 @@ SAVINGS, CURRENT
 @Table(name = "AccountTransaction")
 data class AccountTransaction(
         @Id
-        @GeneratedValue
-        val id:Long=0,
+        @GeneratedValue(generator = "UUID")
+        @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+        val id: UUID?=null,
         @Column(name = "transactionRemark", nullable = false)
         val transactionRemark:String,
         @Column(name = "amount", nullable = false)

@@ -7,7 +7,7 @@ import java.util.*
 data class TransactionRequest (val requestId : String, val description : String, val creditor: Creditor, val value: Value) : Serializable
 
 data class Creditor(
-        val bank_id: String,
+        val bankId: String="",
         val accountNumber : Long
 ) : Serializable
 data class Value(

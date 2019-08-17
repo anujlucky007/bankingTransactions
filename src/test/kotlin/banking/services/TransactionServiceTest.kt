@@ -58,7 +58,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
                 value = Value(50.0, "INR"), description = "Flat rent")
 
         val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
@@ -87,7 +87,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountOne.id),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountOne.id),
                 value = Value(50.0, "INR"), description = "Flat rent")
 
 
@@ -111,7 +111,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
                 value = Value(50.0, "UNKNOWN"), description = "Flat rent")
 
         val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
@@ -141,7 +141,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
                 value = Value(50.0, "INR"), description = "Flat rent")
 
        transactionService.transactIntraBank(accountOne.id, transactionRequest)
@@ -173,7 +173,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
                 value = Value(1.0, "USD"), description = "Flat rent")
 
         val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
@@ -204,7 +204,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
                 value = Value(1000.0, "INR"), description = "Flat rent")
 
         val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
@@ -232,7 +232,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = 1000),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = 1000),
                 value = Value(100.0, "INR"), description = "Flat rent")
 
         val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
@@ -261,7 +261,7 @@ class TransactionServiceTest{
 
 
         val transactionRequest = TransactionRequest(
-                requestId = "123", creditor = Creditor(bank_id = "", accountNumber = accountTwo.id),
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
                 value = Value(50.0, "INR"), description = "Flat rent")
 
         val actualTransactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)

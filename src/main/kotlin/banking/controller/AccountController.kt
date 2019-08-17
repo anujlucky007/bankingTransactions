@@ -33,7 +33,7 @@ import javax.validation.Valid
 @Validated
 class AccountController(val accountService: AccountService) {
 
-    @Get("/{accountNumber}")
+    @Get("/{accountNumber}",produces = [MediaType.APPLICATION_JSON])
     fun getAccount(accountNumber: Long): AccountDTO {
         return accountService.getAccountDetails(accountNumber)
     }
@@ -43,7 +43,7 @@ class AccountController(val accountService: AccountService) {
         return  accountService.createAccount(account)
     }
 
-    @Post("/transact")
+    @Post("/transact" ,consumes = [MediaType.APPLICATION_JSON])
     fun accountTransaction(@Body @Valid account: AccountActivityRequest): AccountActivityResponse {
         return  accountService.doAccountActivity(account)
     }

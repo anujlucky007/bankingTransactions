@@ -18,6 +18,7 @@ package banking.controller
 import banking.dto.TransactionRequest
 import banking.dto.TransactionResponse
 import banking.services.TransactionService
+import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -30,15 +31,22 @@ import javax.validation.Valid
 @Validated
 class TransactionController(val transactionService : TransactionService) {
 
-    @Post("/{accountNumber}/transaction-request")
-    fun intraBankTransactions(accountNumber :Long,@Body @Valid transactionRequest: TransactionRequest): TransactionResponse {
-        return transactionService.transactIntraBank(accountNumber,transactionRequest)
+    @Post("/{accountNumber}/transaction-request/{transactionType}",consumes = [MediaType.APPLICATION_JSON])
+    fun intraBankTransactions(accountNumber :Long,transactionType: TransactionType,@Body @Valid transactionRequest: TransactionRequest): TransactionResponse {
+        return  when(transactionType){
+           TransactionType.INTRABANK->transactionService.transactIntraBank(accountNumber,transactionRequest)
+           TransactionType.INTERBANK->transactionService.transactInterBankAccount(accountNumber,transactionRequest)
+       }
     }
 
 
-    @Get("/{transactionId}/status")
+    @Get("/{transactionId}/status",produces = [MediaType.APPLICATION_JSON])
     fun getTransactionStatus(transactionId : UUID): TransactionResponse {
         return transactionService.getTransactionStatus(transactionId)
     }
 
+}
+
+enum class TransactionType {
+INTERBANK, INTRABANK
 }

@@ -8,6 +8,7 @@ import banking.model.CustomerTransaction
 import java.lang.Exception
 import java.util.*
 import javax.inject.Singleton
+import javax.management.ValueExp
 
 
 @Singleton
@@ -21,6 +22,12 @@ class TransactionService(var requestValidationService: RequestValidationService,
                 status = customerTransaction.status,
                 value = Value(customerTransaction.amount,customerTransaction.currency)
         )
+    }
+
+    fun transactInterBankAccount(accountNumber: Long, transactionRequest: TransactionRequest):TransactionResponse{
+        //TODO  implementation of interbanking transaction
+        // can use transactIntraBank to submit amount in pool account and then API Integration for bank transfer
+        return TransactionResponse(id = UUID.randomUUID(),status = TransactionActivityStatus.ERROR,message = "FUNCTIONALITY NOT SUPPORTED",value = Value(0.0,""))
     }
 
     fun transactIntraBank(accountNumber: Long, transactionRequest: TransactionRequest): TransactionResponse {
