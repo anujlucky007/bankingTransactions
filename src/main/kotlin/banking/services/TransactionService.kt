@@ -20,14 +20,15 @@ class TransactionService(var requestValidationService: RequestValidationService,
         return TransactionResponse(
                 id=customerTransaction.id!!,
                 status = customerTransaction.status,
-                value = Value(customerTransaction.amount,customerTransaction.currency)
+                value = Value(customerTransaction.amount,customerTransaction.currency),
+                message=customerTransaction.message
         )
     }
 
     fun transactInterBankAccount(accountNumber: Long, transactionRequest: TransactionRequest):TransactionResponse{
         //TODO  implementation of interbanking transaction
         // can use transactIntraBank to submit amount in pool account and then API Integration for bank transfer
-        return TransactionResponse(id = UUID.randomUUID(),status = TransactionActivityStatus.ERROR,message = "FUNCTIONALITY NOT SUPPORTED",value = Value(0.0,""))
+        return TransactionResponse(id = UUID.randomUUID(),status = TransactionActivityStatus.ERROR,message = "FUNCTIONALITY NOT SUPPORTED",value = Value(0.0,"XYZ"))
     }
 
     fun transactIntraBank(accountNumber: Long, transactionRequest: TransactionRequest): TransactionResponse {
@@ -112,7 +113,7 @@ class TransactionService(var requestValidationService: RequestValidationService,
     private fun createNewCustomerTransaction(transactionRequest: TransactionRequest, accountNumber: Long): CustomerTransaction {
         var createCustomerTransaction = CustomerTransaction(creditorAccountNumber = transactionRequest.creditor.accountNumber,
                 debitorAccountNumber = accountNumber, status = TransactionActivityStatus.INPROGRESS,currency = transactionRequest.value.currency,
-                amount = transactionRequest.value.amount
+                amount = transactionRequest.value.amount,message = transactionRequest.description
                 )
 
         createCustomerTransaction = customerTransactionRepository.save(createCustomerTransaction)

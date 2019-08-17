@@ -225,6 +225,23 @@ class TransactionServiceTest{
     }
 
     @Test
+    fun `should  give failed transfer status from one account to another when debitor account is wrong `(){
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = 124),
+                value = Value(1000.0, "INR"), description = "Flat rent")
+
+        val transactionResult=transactionService.transactIntraBank(123, transactionRequest)
+
+        transactionResult.id shouldNotBe  null
+        transactionResult.status shouldBe TransactionActivityStatus.FAILED
+        transactionResult.message shouldBe "Debitor : Account Not Found"
+        transactionResult.value shouldBe Value(1000.0,"INR")
+
+    }
+
+
+    @Test
     fun `should  give failed transfer status from one account to another when problem with crediting amount and reverse previous transaction`(){
 
         val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
@@ -271,7 +288,7 @@ class TransactionServiceTest{
         transactionStatus.id shouldBe actualTransactionResult.id
         transactionStatus.status shouldBe TransactionActivityStatus.COMPLETED
         transactionStatus.value shouldBe Value(50.0,"INR")
-        transactionStatus.message shouldBe ""
+        transactionStatus.message shouldBe "Flat rent"
 
     }
 

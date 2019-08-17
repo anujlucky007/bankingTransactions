@@ -100,6 +100,7 @@ class AccountServiceImplTest{
 
         actualAccountActivityResponse.accountNumber shouldBe 1001010
         actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+        actualAccountActivityResponse.message shouldBe "Account Not Found"
     }
 
     @Test
