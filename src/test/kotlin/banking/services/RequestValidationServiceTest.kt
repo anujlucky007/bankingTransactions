@@ -51,8 +51,8 @@ class RequestValidationServiceTest{
         val exception=assertThrows(ValidationException::class.java) {
             requestValidationService.validateRequest(1234,"tx2")
         }
-        exception.errorCode shouldBe "OBANK.002"
-        exception.errorMessage shouldBe "Request Not Processed Something Went Wrong"
+        exception.errorCode shouldBe "OBANK.DUPLICATE.002"
+        exception.errorMessage shouldBe "Duplicate Request"
     }
 
 }
