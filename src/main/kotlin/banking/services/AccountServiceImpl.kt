@@ -9,6 +9,7 @@ import banking.dto.*
 import banking.model.AccountStatus
 import banking.model.AccountTransaction
 import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
 import javax.inject.Singleton
 
 @Singleton
@@ -25,9 +26,12 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
     override fun getAccountDetails(accountNumber: Long): AccountDTO {
 
        val accountTransactions= accountTransactionRepository.findTransactionsOfAccount(accountNumber)
+       var accountTransactionDto= accountTransactions.stream().map {
+            AccountTransactionDTO(id=it.id!!,transactionType = it.transactionType,amount = it.amount,transactionRemark = it.transactionRemark)
+        }.collect(Collectors.toList())
         val accountDetails=fetchAccountDetails(accountNumber)
         return AccountDTO(accountNumber= accountDetails.id,customerName=accountDetails.customerName,accountBalance = accountDetails.accountBalance
-                ,baseCurrency = accountDetails.baseCurrency,accountType = accountDetails.type,status = accountDetails.status,accountTransaction =accountTransactions)
+                ,baseCurrency = accountDetails.baseCurrency,accountType = accountDetails.type,status = accountDetails.status,accountTransaction =accountTransactionDto)
 
     }
 
