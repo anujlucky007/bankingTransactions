@@ -14,7 +14,7 @@ data class Value(
         val currency: String
 ) : Serializable
 
-data class TransactionResponse (val id : String, val value: Value, val status : TransactionActivityStatus) : Serializable
+data class TransactionResponse (val id : Long, val value: Value, val status : TransactionActivityStatus,val message:String?="") : Serializable
 
 enum class TransactionActivityStatus {
     COMPLETED,

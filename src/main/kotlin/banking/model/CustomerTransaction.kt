@@ -10,7 +10,7 @@ import javax.persistence.Table
 @Table(name = "CustomerTransaction")
 data class CustomerTransaction(@Id
                                @GeneratedValue
-                               val id: Long,
+                               val id: Long=0,
                                val creditorAccountNumber:Long,
                                val debitorAccountNumber: Long,
                                val status: TransactionActivityStatus,
