@@ -13,72 +13,84 @@ import javax.inject.Singleton
 @Singleton
 class TransactionService(var requestValidationService: RequestValidationService, private val accountService: AccountServiceImpl,val customerTransactionRepository: CustomerTransactionRepository) {
 
-    // 1. is transaction request valid
-    //2. generate transaction id
-    //3. save transaction in db (id, txn creditor remark, txn debitor remark, creditor account id , amount , currency, status )
-    //4. validate account balance with curency into consideration
-    //5. debit from account
-    //6 credit to account -- should return some object not exception
-    //send response back with transaction id generated
-    //transactional property with debit and credit
-    //6 credit to account -- should return some object not exception
-    //send response back with transaction id generated
-    //transactional property with debit and credit
-
     fun getTransactionStatus(id: UUID) :TransactionResponse {
         val customerTransaction= customerTransactionRepository.findById(id) ?: throw GenericException("Transaction Not found","OBB.TRANSACTION.NOTFOUND")
 
-        return TransactionResponse(id=customerTransaction.id!!,status = customerTransaction.status,value = Value(customerTransaction.amount,customerTransaction.currency))
+        return TransactionResponse(
+                id=customerTransaction.id!!,
+                status = customerTransaction.status,
+                value = Value(customerTransaction.amount,customerTransaction.currency)
+        )
     }
 
     fun transactIntraBank(accountNumber: Long, transactionRequest: TransactionRequest): TransactionResponse {
 
         requestValidationService.validateRequest(accountNumber, transactionRequest.requestId)
 
-        if(accountNumber==transactionRequest.creditor.accountNumber){
-           throw ValidationException("Same account transfer","OBB.TRANSFER.SAMEACCOUNT")
-       }
-
-        var createCustomerTransaction = createNewCustomerTransaction(transactionRequest, accountNumber)
-
-        val accountWithdrawalActivityRequest = AccountActivityRequest(accountNumber = accountNumber,
-                transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
-                activityRemark = "${ActivityType.WITHDRAW} for depositing in account ${transactionRequest.creditor.accountNumber}",
-                activityType = ActivityType.WITHDRAW)
-
-        try {
-            val accountDebitActivityResponse = accountService.doAccountActivity(accountWithdrawalActivityRequest)
-
-            when {
-                accountDebitActivityResponse.status == ActivityStatus.COMPLETED -> {
-                    val accountDepositActivityRequest = AccountActivityRequest(accountNumber = transactionRequest.creditor.accountNumber,
-                            transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
-                            activityRemark = "${ActivityType.DEPOSIT} from account ${accountNumber}",
-                            activityType = ActivityType.DEPOSIT)
-
-                    val accountCreditActivityResponse=accountService.doAccountActivity(accountDepositActivityRequest)
-                    return when {
-                        accountCreditActivityResponse.status == ActivityStatus.ERROR -> {
-                            reverseTransaction(accountNumber, transactionRequest)
-                            updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "Creditor : ${accountCreditActivityResponse.message} : Reverse Transaction",status = TransactionActivityStatus.FAILED)
-                        }
-                        else -> updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = transactionRequest.description,status = TransactionActivityStatus.COMPLETED)
-                    }
-
-                }
-                accountDebitActivityResponse.status == ActivityStatus.ERROR -> {
-                    return updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "Debitor : "+accountDebitActivityResponse.message!!,status = TransactionActivityStatus.FAILED)
-
-                }
-            }
-        }catch (ex:Exception){
-           return  updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = ex.message.toString(),status = TransactionActivityStatus.ERROR)
-
+        if (accountNumber == transactionRequest.creditor.accountNumber) {
+            throw ValidationException("Same account transfer", "OBB.TRANSFER.SAMEACCOUNT")
         }
 
-        return TransactionResponse(id=createCustomerTransaction.id!!,status = TransactionActivityStatus.FAILED,value = transactionRequest.value)
+        val customerAccountTransferTransaction = createNewCustomerTransaction(transactionRequest, accountNumber)
 
+        try {
+            val accountWithdrawalActivityRequest = AccountActivityRequest(accountNumber = accountNumber,
+                    transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
+                    activityRemark = "${ActivityType.WITHDRAW} for depositing in account ${transactionRequest.creditor.accountNumber}",
+                    activityType = ActivityType.WITHDRAW)
 
+            val accountDebitActivityResponse = accountService.doAccountActivity(accountWithdrawalActivityRequest)
+
+            return when (accountDebitActivityResponse.status) {
+                ActivityStatus.COMPLETED -> {
+                    creditAmountInAccount(transactionRequest, accountNumber, customerAccountTransferTransaction)
+                }
+                ActivityStatus.ERROR -> {
+                    updateCustomerTransaction(
+                            customerTransaction = customerAccountTransferTransaction,
+                            value = transactionRequest.value,
+                            message = "Debitor : " + accountDebitActivityResponse.message!!,
+                            status = TransactionActivityStatus.FAILED
+                    )
+                }
+            }
+        } catch (ex: Exception) {
+            return updateCustomerTransaction(
+                    customerTransaction = customerAccountTransferTransaction,
+                    value = transactionRequest.value,
+                    message = ex.message.toString(),
+                    status = TransactionActivityStatus.ERROR
+            )
+
+        }
+    }
+
+    private fun creditAmountInAccount(transactionRequest: TransactionRequest, debitAccountNumber: Long, createCustomerTransaction:CustomerTransaction): TransactionResponse {
+        val accountDepositActivityRequest = AccountActivityRequest(accountNumber = transactionRequest.creditor.accountNumber,
+                transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
+                activityRemark = "${ActivityType.DEPOSIT} from account $debitAccountNumber",
+                activityType = ActivityType.DEPOSIT)
+
+        val accountCreditActivityResponse = accountService.doAccountActivity(accountDepositActivityRequest)
+        return when (accountCreditActivityResponse.status) {
+            ActivityStatus.ERROR -> {
+                reverseTransaction(debitAccountNumber, transactionRequest)
+                updateCustomerTransaction(
+                        customerTransaction = createCustomerTransaction,
+                        value = transactionRequest.value,
+                        message = "Creditor : ${accountCreditActivityResponse.message} : Reverse Transaction",
+                        status = TransactionActivityStatus.FAILED
+                )
+            }
+            ActivityStatus.COMPLETED -> {
+                updateCustomerTransaction(
+                        customerTransaction = createCustomerTransaction,
+                        value = transactionRequest.value,
+                        message = transactionRequest.description,
+                        status = TransactionActivityStatus.COMPLETED
+                )
+            }
+        }
     }
 
     private fun reverseTransaction(accountNumber: Long, transactionRequest: TransactionRequest) {
@@ -107,7 +119,11 @@ class TransactionService(var requestValidationService: RequestValidationService,
 
         customerTransactionRepository.updateCustomerTransaction(customerTransaction = customerTransaction)
 
-
-        return TransactionResponse(id=customerTransaction.id!!,status = customerTransaction.status,message = message,value = value)
+        return TransactionResponse(
+                id=customerTransaction.id!!,
+                status = customerTransaction.status,
+                message = message,
+                value = value
+        )
     }
 }
