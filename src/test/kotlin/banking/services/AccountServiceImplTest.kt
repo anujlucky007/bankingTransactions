@@ -18,14 +18,12 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.verify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import redis.embedded.RedisServer
 import javax.inject.Inject
 
 @MicronautTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AccountServiceImplTest{
 
     @Inject
@@ -39,16 +37,17 @@ class AccountServiceImplTest{
     lateinit  var redisServer : RedisServer
 
 
-    @BeforeEach
+    @BeforeAll
     fun setUp() {
         redisServer = RedisServer(6379)
         redisServer.start()
 
-        val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
+        val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,
+                status = AccountStatus.ACTIVE,customerName = "Anuj Rai")
         account=accountRepository.save(acc)
     }
 
-    @AfterEach
+    @AfterAll
     fun tearDown() {
         redisServer.stop()
     }
@@ -60,6 +59,7 @@ class AccountServiceImplTest{
 
         actualAccount.id shouldBe account.id
         actualAccount.accountBalance shouldBe 100.00
+
 
     }
 

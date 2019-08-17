@@ -17,7 +17,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
 ) : AccountService {
     override fun createAccount(accountCreationRequest: AccountDTO): AccountDTO {
         val account= Account(id=0,baseCurrency = accountCreationRequest.baseCurrency,accountBalance = accountCreationRequest.accountBalance,
-                type = accountCreationRequest.accountType,status = AccountStatus.ACTIVE)
+                type = accountCreationRequest.accountType,status = AccountStatus.ACTIVE,customerName = accountCreationRequest.customerName)
        val createdAccount= accountRepository.save(account)
         return accountCreationRequest.copy(accountNumber =createdAccount.id)
     }

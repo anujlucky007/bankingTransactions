@@ -16,6 +16,8 @@ data class CustomerTransaction(@Id
                                val id: UUID?=null,
                                val creditorAccountNumber:Long,
                                val debitorAccountNumber: Long,
-                               val status: TransactionActivityStatus,
-                               val message:String?=""
+                               var status: TransactionActivityStatus,
+                               val amount:Double,
+                               val currency:String,
+                               var message:String?=""
                                )

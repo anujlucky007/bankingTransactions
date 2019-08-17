@@ -21,6 +21,7 @@ enum class TransactionActivityStatus {
     COMPLETED,
     INPROGRESS,
     SUBMITTED,
+    FAILED,
     ERROR
 }
 

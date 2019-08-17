@@ -5,14 +5,13 @@ import banking.client.ApplicationRedissonClient
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import redis.embedded.RedisServer
 
 @ExtendWith(MockKExtension::class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RequestValidationServiceTest{
 
 
@@ -21,7 +20,7 @@ class RequestValidationServiceTest{
     private lateinit var applicationRedissonClient: ApplicationRedissonClient
     lateinit  var redisServer : RedisServer
 
-    @BeforeEach
+    @BeforeAll
     fun setUp() {
         redisServer = RedisServer(6379)
         redisServer.start()
@@ -30,7 +29,7 @@ class RequestValidationServiceTest{
          requestValidationService = RequestValidationService(lockService)
     }
 
-    @AfterEach
+    @AfterAll
     fun tearDown() {
         redisServer.stop()
     }
@@ -46,11 +45,11 @@ class RequestValidationServiceTest{
     @Test
     fun `should throw exception when requestId is duplicate for account Number`() {
 
-        val lock = requestValidationService.validateRequest(1234,"tx1")
+        val lock = requestValidationService.validateRequest(1234,"tx2")
         lock shouldNotBe  null
         lock shouldBe true
         val exception=assertThrows(ValidationException::class.java) {
-            requestValidationService.validateRequest(1234,"tx1")
+            requestValidationService.validateRequest(1234,"tx2")
         }
         exception.errorCode shouldBe "OBANK.002"
         exception.errorMessage shouldBe "Request Not Processed Something Went Wrong"

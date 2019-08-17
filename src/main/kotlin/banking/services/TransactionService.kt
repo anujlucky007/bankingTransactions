@@ -1,9 +1,11 @@
 package banking.services
 
+import banking.GenericException
 import banking.dao.CustomerTransactionRepository
 import banking.dto.*
 import banking.model.CustomerTransaction
 import java.lang.Exception
+import java.util.*
 import javax.inject.Singleton
 
 
@@ -22,14 +24,17 @@ class TransactionService(var requestValidationService: RequestValidationService,
     //send response back with transaction id generated
     //transactional property with debit and credit
 
+    fun getTransactionStatus(id: UUID) :TransactionResponse {
+        val customerTransaction= customerTransactionRepository.findById(id) ?: throw GenericException("Transaction Not found","OBB.TRANSACTION.NOTFOUND")
+
+        return TransactionResponse(id=customerTransaction.id!!,status = customerTransaction.status,value = Value(customerTransaction.amount,customerTransaction.currency))
+    }
+
     fun transactIntraBank(accountNumber: Long, transactionRequest: TransactionRequest): TransactionResponse {
 
         requestValidationService.validateRequest(accountNumber, transactionRequest.requestId)
 
-        var createCustomerTransaction=CustomerTransaction(creditorAccountNumber = transactionRequest.creditor.accountNumber,
-                debitorAccountNumber = accountNumber,status = TransactionActivityStatus.INPROGRESS)
-
-        createCustomerTransaction=customerTransactionRepository.save(createCustomerTransaction)
+        var createCustomerTransaction = createNewCustomerTransaction(transactionRequest, accountNumber)
 
         val accountWithdrawalActivityRequest = AccountActivityRequest(accountNumber = accountNumber,
                 transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
@@ -37,28 +42,67 @@ class TransactionService(var requestValidationService: RequestValidationService,
                 activityType = ActivityType.WITHDRAW)
 
         try {
-            val accountActivityResponse = accountService.doAccountActivity(accountWithdrawalActivityRequest)
+            val accountDebitActivityResponse = accountService.doAccountActivity(accountWithdrawalActivityRequest)
 
             when {
-                accountActivityResponse.status == ActivityStatus.COMPLETED -> {
+                accountDebitActivityResponse.status == ActivityStatus.COMPLETED -> {
                     val accountDepositActivityRequest = AccountActivityRequest(accountNumber = transactionRequest.creditor.accountNumber,
                             transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
                             activityRemark = "",
                             activityType = ActivityType.DEPOSIT)
 
-                    accountService.doAccountActivity(
-                            accountDepositActivityRequest)
+                    val accountCreditActivityResponse=accountService.doAccountActivity(accountDepositActivityRequest)
+                    return when {
+                        accountCreditActivityResponse.status == ActivityStatus.ERROR -> {
+                            reverseTransaction(accountNumber, transactionRequest)
+                            updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "Reverse Transaction",status = TransactionActivityStatus.FAILED)
+                        }
+                        else -> updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = "",status = TransactionActivityStatus.COMPLETED)
+                    }
 
                 }
-                accountActivityResponse.status == ActivityStatus.ERROR -> {
+                accountDebitActivityResponse.status == ActivityStatus.ERROR -> {
+                    return updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = accountDebitActivityResponse.message!!,status = TransactionActivityStatus.FAILED)
 
                 }
             }
         }catch (ex:Exception){
-            return TransactionResponse(id=createCustomerTransaction.id!!,status = TransactionActivityStatus.ERROR,message = ex.message.toString(),value = transactionRequest.value)
+           return  updateCustomerTransaction(customerTransaction = createCustomerTransaction,value = transactionRequest.value,message = ex.message.toString(),status = TransactionActivityStatus.ERROR)
+
         }
 
-        return TransactionResponse(id=createCustomerTransaction.id!!,status = TransactionActivityStatus.COMPLETED,value = transactionRequest.value)
+        return TransactionResponse(id=createCustomerTransaction.id!!,status = TransactionActivityStatus.FAILED,value = transactionRequest.value)
 
+
+    }
+
+    private fun reverseTransaction(accountNumber: Long, transactionRequest: TransactionRequest) {
+        val accountReverseDepositActivityRequest = AccountActivityRequest(accountNumber = accountNumber,
+                transactionAmount = TransactionAmount(transactionRequest.value.amount, transactionRequest.value.currency),
+                activityRemark = "Reverse Transaction",
+                activityType = ActivityType.DEPOSIT)
+
+        accountService.doAccountActivity(accountReverseDepositActivityRequest)
+    }
+
+    private fun createNewCustomerTransaction(transactionRequest: TransactionRequest, accountNumber: Long): CustomerTransaction {
+        var createCustomerTransaction = CustomerTransaction(creditorAccountNumber = transactionRequest.creditor.accountNumber,
+                debitorAccountNumber = accountNumber, status = TransactionActivityStatus.INPROGRESS,currency = transactionRequest.value.currency,
+                amount = transactionRequest.value.amount
+                )
+
+        createCustomerTransaction = customerTransactionRepository.save(createCustomerTransaction)
+        return createCustomerTransaction
+    }
+
+    private fun updateCustomerTransaction(customerTransaction: CustomerTransaction,value:Value,status :TransactionActivityStatus, message:String ): TransactionResponse {
+
+        customerTransaction.status=status
+        customerTransaction.message=message
+
+        customerTransactionRepository.updateCustomerTransaction(customerTransaction = customerTransaction)
+
+
+        return TransactionResponse(id=customerTransaction.id!!,status = customerTransaction.status,message = message,value = value)
     }
 }

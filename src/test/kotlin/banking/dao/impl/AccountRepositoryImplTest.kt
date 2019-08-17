@@ -20,7 +20,7 @@ class AccountRepositoryImplTest{
     @Test
     fun `save account in DB`(){
 
-    val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
+    val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
 
         val account=accountRepository.save(acc)
 
@@ -33,13 +33,15 @@ class AccountRepositoryImplTest{
         actualAccount.status shouldBe  AccountStatus.ACTIVE
 
         actualAccount.baseCurrency shouldBe "INR"
+
+        actualAccount.customerName shouldBe "ANUJ Rai"
     }
 
     @Test
     @Transactional
     fun `update balance in account`(){
 
-        val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE)
+        val acc= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
 
         val account=accountRepository.save(acc)
         account.accountBalance=200.00

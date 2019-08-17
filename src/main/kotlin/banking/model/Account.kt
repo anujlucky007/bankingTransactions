@@ -11,6 +11,7 @@ data class Account(
         @GeneratedValue
         val id: Long,
         val baseCurrency: String ="",
+        val customerName:String,
         var accountBalance: Double=0.0,
         val lockedBalance: Double=0.0,
         val type: AccountType=AccountType.SAVINGS,

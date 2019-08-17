@@ -19,7 +19,7 @@ class CustomerTransactionRepositoryImplTest{
     fun `save customer transaction in DB`(){
 
         val customerTransaction= CustomerTransaction(status = TransactionActivityStatus.COMPLETED,creditorAccountNumber = 1234,
-                debitorAccountNumber = 4567)
+                debitorAccountNumber = 4567,amount = 100.00,currency = "INR")
 
        val savedCustomerTransaction=customerTransactionRepositoryImpl.save(customerTransaction)
 
@@ -29,6 +29,8 @@ class CustomerTransactionRepositoryImplTest{
         actualCustomerTransaction.creditorAccountNumber shouldBe 1234
         actualCustomerTransaction.debitorAccountNumber shouldBe 4567
         actualCustomerTransaction.status shouldBe TransactionActivityStatus.COMPLETED
+        actualCustomerTransaction.currency shouldBe "INR"
+        actualCustomerTransaction.amount shouldBe 100.00
 
     }
 
@@ -36,7 +38,7 @@ class CustomerTransactionRepositoryImplTest{
     fun `update customer transaction in DB`(){
 
         val customerTransaction= CustomerTransaction(status = TransactionActivityStatus.COMPLETED,creditorAccountNumber = 1234,
-                debitorAccountNumber = 4567)
+                debitorAccountNumber = 4567,amount = 100.00,currency = "INR")
 
         val savedCustomerTransaction=customerTransactionRepositoryImpl.save(customerTransaction)
         val changedCustomerTransaction=savedCustomerTransaction.copy(status = TransactionActivityStatus.INPROGRESS)
@@ -50,6 +52,8 @@ class CustomerTransactionRepositoryImplTest{
         actualCustomerTransaction.creditorAccountNumber shouldBe 1234
         actualCustomerTransaction.debitorAccountNumber shouldBe 4567
         actualCustomerTransaction.status shouldBe TransactionActivityStatus.INPROGRESS
+        actualCustomerTransaction.currency shouldBe "INR"
+        actualCustomerTransaction.amount shouldBe 100.00
 
     }
 

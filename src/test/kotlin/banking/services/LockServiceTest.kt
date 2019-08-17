@@ -7,9 +7,7 @@ import io.kotlintest.shouldNotBe
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkClass
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.redisson.Redisson
 import org.redisson.api.RLock
@@ -17,6 +15,7 @@ import redis.embedded.RedisServer
 
 
 @ExtendWith(MockKExtension::class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LockServiceTest {
 
     var applicationRedissonClient = mockkClass(ApplicationRedissonClient::class)
@@ -25,7 +24,7 @@ class LockServiceTest {
 
      lateinit  var redisServer : RedisServer
 
-    @BeforeEach
+    @BeforeAll
     fun setUp() {
         redisServer = RedisServer(6379)
         redisServer.start()
@@ -33,7 +32,7 @@ class LockServiceTest {
         every { applicationRedissonClient.getRedissonClient() } returns redissonClientInstance
     }
 
-    @AfterEach
+    @AfterAll
      fun tearDown() {
         redisServer.stop()
     }
