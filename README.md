@@ -1,6 +1,6 @@
 # bankingTransactions
 
-USED \
+## USED 
 - Language : **Kotlin**
 - Framework :**Micronaut**
 - Testing : **Mockk**
@@ -9,14 +9,14 @@ USED \
 - Build Tool : **Gradle**
 - For Unit test and Api test Micronaut Test  
 
-#How To Use
+## How To Use
  Run application using  
  - gradle clean build
  - gradle run
  - Use Postman collection present in git root folder
  
  
-##Troubleshoot
+## Troubleshoot
  if you get error as  Exception in thread "main" java.lang.RuntimeException: Can't start redis server. Check logs for details.
  - lsof -i:6379
  - kill -9 PID 
