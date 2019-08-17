@@ -1,4 +1,4 @@
-package banking.model
+package banking.dto
 
 import java.io.Serializable
 
@@ -13,3 +13,13 @@ data class Value(
         var amount: Double,
         val currency: String
 ) : Serializable
+
+data class TransactionResponse (val id : String, val value: Value, val status : TransactionActivityStatus) : Serializable
+
+enum class TransactionActivityStatus {
+    COMPLETED,
+    INPROGRESS,
+    SUBMITTED,
+    ERROR
+}
+

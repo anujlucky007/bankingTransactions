@@ -11,8 +11,7 @@ import javax.persistence.PersistenceContext
 
 @Singleton
 open class AccountTransactionRepositoryImpl(@param:CurrentSession @field:PersistenceContext
-                          private val entityManager: EntityManager,
-                                            private val applicationConfiguration: ApplicationConfiguration) : AccountTransactionRepository {
+                          private val entityManager: EntityManager) : AccountTransactionRepository {
     override fun findTransactionsOfAccount(accountNumber: Long): List<AccountTransaction> {
         return listOf()
     }

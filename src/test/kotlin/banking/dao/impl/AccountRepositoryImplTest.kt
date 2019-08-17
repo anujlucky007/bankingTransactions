@@ -1,4 +1,4 @@
-package banking.dao
+package banking.dao.impl
 
 import banking.dao.impl.AccountRepositoryImpl
 import banking.model.Account

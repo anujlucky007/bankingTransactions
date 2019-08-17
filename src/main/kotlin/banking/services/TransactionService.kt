@@ -4,7 +4,7 @@ import banking.dto.AccountActivityRequest
 import banking.dto.ActivityStatus
 import banking.dto.ActivityType
 import banking.dto.TransactionAmount
-import banking.model.TransactionRequest
+import banking.dto.TransactionRequest
 import javax.inject.Singleton
 
 
@@ -32,8 +32,7 @@ class TransactionService(var requestValidationService: RequestValidationService,
                 activityRemark = "",
                 activityType = ActivityType.WITHDRAW)
 
-        val accountActivityResponse=accountService.doAccountActivity(
-                accountWithdrawalActivityRequest)
+        val accountActivityResponse=accountService.doAccountActivity(accountWithdrawalActivityRequest)
 
         when {
             accountActivityResponse.status == ActivityStatus.COMPLETED -> {

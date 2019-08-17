@@ -15,7 +15,7 @@
  */
 package banking.controller
 
-import banking.model.TransactionRequest
+import banking.dto.TransactionRequest
 import banking.services.TransactionService
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
@@ -28,7 +28,7 @@ import javax.validation.Valid
 class TransactionController(val transactionService : TransactionService) {
 
     @Post("/{accountNumber}/transaction-request")
-    fun hello(accountNumber :Long,@Body @Valid transactionRequest: TransactionRequest): String {
+    fun intraBankTransactions(accountNumber :Long,@Body @Valid transactionRequest: TransactionRequest): String {
         return transactionService.transact(accountNumber,transactionRequest)
     }
 }
