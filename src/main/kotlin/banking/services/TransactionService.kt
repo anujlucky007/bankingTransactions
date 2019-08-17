@@ -1,6 +1,7 @@
 package banking.services
 
 import banking.GenericException
+import banking.ValidationException
 import banking.dao.CustomerTransactionRepository
 import banking.dto.*
 import banking.model.CustomerTransaction
@@ -33,7 +34,11 @@ class TransactionService(var requestValidationService: RequestValidationService,
     fun transactIntraBank(accountNumber: Long, transactionRequest: TransactionRequest): TransactionResponse {
 
         requestValidationService.validateRequest(accountNumber, transactionRequest.requestId)
-        // same account transactions
+
+        if(accountNumber==transactionRequest.creditor.accountNumber){
+           throw ValidationException("Same account transfer","OBB.TRANSFER.SAMEACCOUNT")
+       }
+
         var createCustomerTransaction = createNewCustomerTransaction(transactionRequest, accountNumber)
 
         val accountWithdrawalActivityRequest = AccountActivityRequest(accountNumber = accountNumber,
