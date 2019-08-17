@@ -26,11 +26,11 @@ class AccountTransactionRepositoryImplTest{
 
         val account = accountRepository.save(acc)
 
-        val accTransaction = AccountTransaction(id = 0, transactionRemark = "deposit", amount = 100.00, transactionType = ActivityType.DEPOSIT, account = account)
+        val accTransaction = AccountTransaction(transactionRemark = "deposit", amount = 100.00, transactionType = ActivityType.DEPOSIT, account = account)
 
         val accountTransaction = accountTransactionRepository.save(accTransaction)
 
-        val actualAccountTransaction = accountTransactionRepository.findById(accountTransaction.id)
+        val actualAccountTransaction = accountTransactionRepository.findById(accountTransaction.id!!)
 
         actualAccountTransaction!!.account.id shouldBe account.id
         actualAccountTransaction.amount shouldBe 100.00
@@ -47,7 +47,7 @@ class AccountTransactionRepositoryImplTest{
 
         val account = accountRepository.save(acc)
 
-        val accTransaction = AccountTransaction(id = 0, transactionRemark = "deposit", amount = 100.00, transactionType = ActivityType.DEPOSIT, account = account)
+        val accTransaction = AccountTransaction(transactionRemark = "deposit", amount = 100.00, transactionType = ActivityType.DEPOSIT, account = account)
 
         val accountTransaction = accountTransactionRepository.save(accTransaction)
 

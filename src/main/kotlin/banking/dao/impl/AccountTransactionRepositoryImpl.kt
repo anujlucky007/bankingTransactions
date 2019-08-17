@@ -5,6 +5,7 @@ import banking.model.AccountTransaction
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession
 import io.micronaut.runtime.ApplicationConfiguration
 import io.micronaut.spring.tx.annotation.Transactional
+import java.util.*
 import javax.inject.Singleton
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
@@ -25,7 +26,7 @@ open class AccountTransactionRepositoryImpl(@param:CurrentSession @field:Persist
     }
 
     @Transactional(readOnly = true)
-    override fun findById(id: Long): AccountTransaction? {
+    override fun findById(id: UUID): AccountTransaction? {
         return entityManager.find(AccountTransaction::class.java, id)
     }
 

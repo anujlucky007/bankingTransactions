@@ -62,7 +62,7 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
         finally {
             lockService.releaseLockOnAccount(distributedAccountLock)
         }
-        return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = accountDetails!!.accountBalance, status = ActivityStatus.COMPLETED,message = "")
+        return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = accountDetails!!.accountBalance, status = ActivityStatus.COMPLETED,message =accountActivityRequest.activityRemark)
     }
 
     private fun getNewAccountBalance(accountActivityRequest: AccountActivityRequest, accountDetails: Account, amount: Double): Double {

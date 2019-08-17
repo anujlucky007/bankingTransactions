@@ -15,15 +15,26 @@
  */
 package banking
 
+import banking.dto.AccountDTO
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Post
 import io.micronaut.http.client.annotation.Client
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.reactivex.Single
 
 import javax.validation.constraints.NotBlank
 
-@Client("/")
+@Client("/" , errorType = Error::class)
 interface HelloClient {
 
     @Get("/hello/{name}")
     fun hello(@NotBlank name: String): Single<String>
+
+
+    @Get("/account/{accountNumber}")
+    fun getAccountDetails(@NotBlank accountNumber: Long): Single<HttpResponse<Any>>
+
+    @Post("/account/create")
+    fun createAccountDetails(@NotBlank accountDto: AccountDTO): Single<AccountDTO>
 }
