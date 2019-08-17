@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Produces
 @Singleton
-@Requires(classes = [Exception::class, ExceptionHandler::class])
+@Requires(classes = [DuplicateException::class, ExceptionHandler::class])
 class OutOfStockExceptionHandler : ExceptionHandler<DuplicateException, HttpResponse<*>> {
 
     override fun handle(request: HttpRequest<*>, exception: DuplicateException): HttpResponse<*> {
@@ -24,7 +24,7 @@ class OutOfStockExceptionHandler : ExceptionHandler<DuplicateException, HttpResp
 class ExceptionHandler : ExceptionHandler<ValidationException, HttpResponse<*>> {
 
     override fun handle(request: HttpRequest<*>, exception: ValidationException): HttpResponse<*> {
-        return HttpResponse.serverError(exception.message)
+        return HttpResponse.badRequest(Error(exception.errorMessage, exception.errorCode))
     }
 
 }
@@ -41,6 +41,7 @@ class ExceptionNewHandler : ExceptionHandler<java.lang.Exception, HttpResponse<*
 
 }
 
+
 @Produces
 @Singleton
 @Requires(classes = [GenericException::class, ExceptionHandler::class])
@@ -52,7 +53,6 @@ class GenericExceptionHandler : ExceptionHandler<GenericException, HttpResponse<
     }
 
 }
-
 data class  Error(val errorMessage : String,val errorCode:String)
 
 class DuplicateException(val errorMessage : String,val errorCode:String) : RuntimeException()

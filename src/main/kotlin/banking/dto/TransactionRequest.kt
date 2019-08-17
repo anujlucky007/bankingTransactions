@@ -1,6 +1,7 @@
 package banking.dto
 
 import java.io.Serializable
+import java.util.*
 
 
 data class TransactionRequest (val requestId : String, val description : String, val creditor: Creditor, val value: Value) : Serializable
@@ -14,7 +15,7 @@ data class Value(
         val currency: String
 ) : Serializable
 
-data class TransactionResponse (val id : Long, val value: Value, val status : TransactionActivityStatus,val message:String?="") : Serializable
+data class TransactionResponse (val id : UUID, val value: Value, val status : TransactionActivityStatus,val message:String?="") : Serializable
 
 enum class TransactionActivityStatus {
     COMPLETED,

@@ -55,10 +55,10 @@ class TransactionService(var requestValidationService: RequestValidationService,
                 }
             }
         }catch (ex:Exception){
-            return TransactionResponse(id=createCustomerTransaction.id,status = TransactionActivityStatus.ERROR,message = ex.message.toString(),value = transactionRequest.value)
+            return TransactionResponse(id=createCustomerTransaction.id!!,status = TransactionActivityStatus.ERROR,message = ex.message.toString(),value = transactionRequest.value)
         }
 
-        return TransactionResponse(id=createCustomerTransaction.id,status = TransactionActivityStatus.COMPLETED,value = transactionRequest.value)
+        return TransactionResponse(id=createCustomerTransaction.id!!,status = TransactionActivityStatus.COMPLETED,value = transactionRequest.value)
 
     }
 }

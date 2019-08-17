@@ -18,12 +18,12 @@ class CustomerTransactionRepositoryImplTest{
     @Test
     fun `save customer transaction in DB`(){
 
-        val customerTransaction= CustomerTransaction(id=0,status = TransactionActivityStatus.COMPLETED,creditorAccountNumber = 1234,
+        val customerTransaction= CustomerTransaction(status = TransactionActivityStatus.COMPLETED,creditorAccountNumber = 1234,
                 debitorAccountNumber = 4567)
 
        val savedCustomerTransaction=customerTransactionRepositoryImpl.save(customerTransaction)
 
-        val actualCustomerTransaction=customerTransactionRepositoryImpl.findById(savedCustomerTransaction.id)
+        val actualCustomerTransaction=customerTransactionRepositoryImpl.findById(savedCustomerTransaction.id!!)
 
         actualCustomerTransaction!!.id shouldBe savedCustomerTransaction.id
         actualCustomerTransaction.creditorAccountNumber shouldBe 1234
@@ -35,7 +35,7 @@ class CustomerTransactionRepositoryImplTest{
     @Test
     fun `update customer transaction in DB`(){
 
-        val customerTransaction= CustomerTransaction(id=0,status = TransactionActivityStatus.COMPLETED,creditorAccountNumber = 1234,
+        val customerTransaction= CustomerTransaction(status = TransactionActivityStatus.COMPLETED,creditorAccountNumber = 1234,
                 debitorAccountNumber = 4567)
 
         val savedCustomerTransaction=customerTransactionRepositoryImpl.save(customerTransaction)
@@ -44,7 +44,7 @@ class CustomerTransactionRepositoryImplTest{
         customerTransactionRepositoryImpl.updateCustomerTransaction(changedCustomerTransaction)
 
 
-        val actualCustomerTransaction=customerTransactionRepositoryImpl.findById(savedCustomerTransaction.id)
+        val actualCustomerTransaction=customerTransactionRepositoryImpl.findById(savedCustomerTransaction.id!!)
 
         actualCustomerTransaction!!.id shouldBe savedCustomerTransaction.id
         actualCustomerTransaction.creditorAccountNumber shouldBe 1234

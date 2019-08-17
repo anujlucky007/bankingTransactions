@@ -4,6 +4,7 @@ import banking.dao.CustomerTransactionRepository
 import banking.model.CustomerTransaction
 import io.micronaut.configuration.hibernate.jpa.scope.CurrentSession
 import io.micronaut.spring.tx.annotation.Transactional
+import java.util.*
 import javax.inject.Singleton
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
@@ -24,7 +25,7 @@ open class CustomerTransactionRepositoryImpl(@param:CurrentSession @field:Persis
 
 
     @Transactional(readOnly = true)
-    override fun findById(id: Long): CustomerTransaction? {
+    override fun findById(id: UUID): CustomerTransaction? {
         return entityManager.find(CustomerTransaction::class.java, id)
     }
 

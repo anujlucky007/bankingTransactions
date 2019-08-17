@@ -1,11 +1,12 @@
 package banking.dao
 
 import banking.model.CustomerTransaction
+import java.util.*
 import javax.validation.constraints.NotBlank
 
 interface CustomerTransactionRepository {
 
-    fun findById(id: Long): CustomerTransaction?
+    fun findById(id: UUID): CustomerTransaction?
 
     fun save(@NotBlank customerTransaction: CustomerTransaction): CustomerTransaction
 
