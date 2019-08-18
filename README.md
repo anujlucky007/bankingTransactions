@@ -7,7 +7,7 @@ bankingTransactions.json
 - Language : **Kotlin**
 - Framework :**Micronaut**
 - Testing : **Mockk**
-- Distributed Locking : **Redisson And Rediss**
+- Distributed Locking : **Redisson And Rediss in-memory**
 - Database - **H2 inmemory**
 - Build Tool : **Gradle**
 - For Unit test and Api test Micronaut Test  
