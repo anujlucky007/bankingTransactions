@@ -1,0 +1,216 @@
+{
+	"info": {
+		"_postman_id": "2a65a717-87ea-483b-ba69-67cfa66f3a37",
+		"name": "new",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AccountTransactionINTRA-BANK",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"requestId\": \"223\",\n    \"description\": \"anuj money ask\",\n    \"creditor\": {\n        \"accountNumber\": 2\n    },\n    \"value\": {\n        \"amount\": 1,\n        \"currency\": \"EUR\"\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/transaction/1/transaction-request/INTRABANK",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transaction",
+						"1",
+						"transaction-request",
+						"INTRABANK"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Account create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"accountBalance\": 100,\n    \"accountType\": \"SAVINGS\",\n    \"status\": \"ACTIVE\",\n    \"customerName\": \"ANUJ Rai\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/account/create",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"account",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAccountDetails",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/account/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"account",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Withdrawl from Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"accountNumber\": 1,\n    \"transactionAmount\": {\n    \t\"value\":3,\n    \t\"currency\" :\"USD\"\n    },\n    \"activityRemark\":\"deposit 2 dollor in account\",\n    \"activityType\" :\"WITHDRAW\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/account/transact",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"account",
+						"transact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deposit to Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"accountNumber\": 1,\n    \"transactionAmount\": {\n    \t\"value\":3,\n    \t\"currency\" :\"EUR\"\n    },\n    \"activityRemark\":\"deposit 2 dollor in account\",\n    \"activityType\" :\"DEPOSIT\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/account/transact",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"account",
+						"transact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Customer Transaction Status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/transaction/dae4ed02-b07b-4e14-b6ed-7a909de07d7b/status",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transaction",
+						"dae4ed02-b07b-4e14-b6ed-7a909de07d7b",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AccountTransactionINTER-BANK",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": " {\n        \"requestId\": \"1232121\",\n        \"description\": \"anuj money ask\",\n        \"creditor\": {\n            \"bank_id\": \"Bank001\",\n            \"accountNumber\":1\n        },\n        \"value\": {\n            \"amount\": 100.00,\n            \"currency\": \"INR\"\n        }\n    }\n"
+				},
+				"url": {
+					"raw": "localhost:8080/transaction/2/transaction-request/INTERBANK",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transaction",
+						"2",
+						"transaction-request",
+						"INTERBANK"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

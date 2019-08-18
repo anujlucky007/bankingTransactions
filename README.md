@@ -1,7 +1,7 @@
 # bankingTransactions
 
 ## POSTMAN Collection 
-postmanCollection.json
+bankingTransactions.json
 
 ## USED 
 - Language : **Kotlin**
@@ -43,5 +43,36 @@ diagram.jpg)
     5.Transfer request status
     6.Distributed Lock managemnt using Rediss and Redisson for synchronized Account activity Across Multiple Instance of server
     7.Suports Two type of transfer Inter and Intra 
-    8.Inter bank transfer is not implemented    
+    8.Inter bank transfer is not implemented  
     
+## API Documentation
+
+Transaction Api
+
+    Api :http://localhost:8080/transaction/1/transaction-request/INTRABANK
+   
+     Request body 
+              curl -X POST \
+                http://localhost:8080/transaction/1/transaction-request/INTRABANK \
+                -H 'Accept: */*' \
+                -H 'Accept-Encoding: gzip, deflate' \
+                -H 'Cache-Control: no-cache' \
+                -H 'Connection: keep-alive' \
+                -H 'Content-Length: 185' \
+                -H 'Content-Type: application/json' \
+                -H 'Host: localhost:8080' \
+                -H 'cache-control: no-cache' \
+                -d '{
+                  "requestId": "23",
+                  "description": "anuj money ask",
+                  "creditor": {
+                      "accountNumber": 2
+                  },
+                  "value": {
+                      "amount": 100,
+                      "currency": "INR"
+                  }
+              }'
+      
+      Response
+                
