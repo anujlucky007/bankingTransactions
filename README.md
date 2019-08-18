@@ -74,5 +74,15 @@ Transaction Api
                   }
               }'
       
-      Response
+      Response:
+      
+       {
+           "id": "dae4ed02-b07b-4e14-b6ed-7a909de07d7b",
+           "value": {
+               "amount": 1.0,
+               "currency": "EUR"
+           },
+           "status": "COMPLETED",
+           "message": "anuj money ask"
+       }
                 
