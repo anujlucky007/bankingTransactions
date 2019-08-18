@@ -25,16 +25,31 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
         return accountCreationRequest.copy(accountNumber =createdAccount.id)
     }
 
+    override fun closeAccount(accountNumber: Long): AccountDTO {
+        val account= fetchAccountDetails(accountNumber)
+        account.status=AccountStatus.CLOSED
+        val updatedAccount= accountRepository.updateAccount(account)
+
+        return AccountDTO(
+                accountNumber =accountNumber,
+                status = updatedAccount.status,
+                accountBalance = updatedAccount.accountBalance,
+                baseCurrency = updatedAccount.baseCurrency,
+                accountType = updatedAccount.type,
+                customerName = updatedAccount.customerName
+        )
+    }
+
     override fun getAccountDetails(accountNumber: Long): AccountDTO {
 
-       val accountTransactions= accountTransactionRepository.findTransactionsOfAccount(accountNumber)
+        val accountDetails=fetchAccountDetails(accountNumber)
+       val accountTransactions= fetchAccountTransactionDetails(accountNumber)
        var accountTransactionDto= accountTransactions.stream().map {
             AccountTransactionDTO(id=it.id!!,transactionType = it.transactionType,amount = it.amount,transactionRemark = it.transactionRemark)
         }.collect(Collectors.toList())
-        val accountDetails=fetchAccountDetails(accountNumber)
+
         return AccountDTO(accountNumber= accountDetails.id,customerName=accountDetails.customerName,accountBalance = accountDetails.accountBalance
                 ,baseCurrency = accountDetails.baseCurrency,accountType = accountDetails.type,status = accountDetails.status,accountTransaction =accountTransactionDto)
-
     }
 
     private fun fetchAccountDetails(accountNumber: Long): Account {
@@ -55,12 +70,17 @@ open class AccountServiceImpl(private val lockService: LockService, private val 
         distributedAccountLock.lock(20,TimeUnit.SECONDS)
         try {
             accountDetails = fetchAccountDetails(accountActivityRequest.accountNumber)
-            val amountInAccountBaseCurrency = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails.baseCurrency, accountActivityRequest.transactionAmount.value)
-            val updatedAccountBalance = getNewAccountBalance(accountActivityRequest, accountDetails, amountInAccountBaseCurrency)
-            accountDetails.accountBalance=updatedAccountBalance
-            val accountTransactional=AccountTransaction(transactionRemark = accountActivityRequest.activityRemark,transactionType = accountActivityRequest.activityType,amount = amountInAccountBaseCurrency,account =accountDetails)
-            accountRepository.updateAccount(accountDetails)
-            accountTransactionRepository.save(accountTransactional)
+            when(accountDetails.status ) {
+                AccountStatus.CLOSED -> throw NotExistsException("Account closed","OBB.ACCOUNT.CLOSED")
+                AccountStatus.ACTIVE -> {
+                    val amountInAccountBaseCurrency = exchangeService.convertCurrency(accountActivityRequest.transactionAmount.currency, accountDetails.baseCurrency, accountActivityRequest.transactionAmount.value)
+                    val updatedAccountBalance = getNewAccountBalance(accountActivityRequest, accountDetails, amountInAccountBaseCurrency)
+                    accountDetails.accountBalance = updatedAccountBalance
+                    val accountTransactional = AccountTransaction(transactionRemark = accountActivityRequest.activityRemark, transactionType = accountActivityRequest.activityType, amount = amountInAccountBaseCurrency, account = accountDetails)
+                    accountRepository.updateAccount(accountDetails)
+                    accountTransactionRepository.save(accountTransactional)
+                }
+            }
         }
         catch (ex:NotExistsException){
             return AccountActivityResponse(accountNumber = accountActivityRequest.accountNumber, updatedAccountBalance = 0.0, status = ActivityStatus.ERROR,message = ex.errorMessage)

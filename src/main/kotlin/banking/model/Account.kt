@@ -18,7 +18,7 @@ data class Account(
         var accountBalance: Double=0.0,
         val lockedBalance: Double=0.0,
         val type: AccountType=AccountType.SAVINGS,
-        val status: AccountStatus= AccountStatus.ACTIVE
+        var status: AccountStatus= AccountStatus.ACTIVE
 )
 
 enum class AccountStatus {

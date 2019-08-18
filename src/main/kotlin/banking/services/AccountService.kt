@@ -13,4 +13,6 @@ interface AccountService{
     fun doAccountActivity(accountActivityRequest: AccountActivityRequest): AccountActivityResponse
 
     fun createAccount(accountCreationRequest: AccountDTO): AccountDTO
+
+    fun closeAccount(accountNumber: Long): AccountDTO
 }

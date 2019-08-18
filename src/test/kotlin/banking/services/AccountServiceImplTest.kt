@@ -105,6 +105,27 @@ class AccountServiceImplTest{
     }
 
     @Test
+    fun `should mark Account activity request as ERROR when account status is Closed`(){
+
+        val accountDto = AccountDTO(
+                accountBalance=100.00,
+                customerName = "Anuj Rai",
+                accountType = AccountType.SAVINGS,
+                status = AccountStatus.CLOSED
+        )
+        val actualAccount=accountService.createAccount(accountDto)
+        accountService.closeAccount(actualAccount.accountNumber)
+
+        val accountActivityRequest = AccountActivityRequest(accountNumber = actualAccount.accountNumber,activityRemark = "withdraw",transactionAmount = TransactionAmount(110.00,"UNKNOWN"),activityType = ActivityType.WITHDRAW)
+
+        val actualAccountActivityResponse=accountService.doAccountActivity(accountActivityRequest)
+
+        actualAccountActivityResponse.accountNumber shouldBe actualAccount.accountNumber
+        actualAccountActivityResponse.status shouldBe ActivityStatus.ERROR
+        actualAccountActivityResponse.message shouldBe "Account closed"
+    }
+
+    @Test
     fun `should deposit amount in account return update Account balance if currency is same`(){
 
         val accountActivityRequest = AccountActivityRequest(accountNumber = account.id,activityRemark = "Deposit",transactionAmount = TransactionAmount(1000.00,"INR"),activityType = ActivityType.DEPOSIT)

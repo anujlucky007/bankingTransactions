@@ -221,7 +221,69 @@ class TransactionServiceTest{
 
         val accountTwoUpdated=accountService.getAccountDetails(accountTwo.id)
         accountTwoUpdated.accountBalance shouldBe 100.0
+        accountTwoUpdated.accountTransaction.size shouldBe 0
+
+    }
+
+    @Test
+    fun `should  give failed transfer status from one account to another when debitor account is closed `(){
+
+        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.CLOSED,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountOne)
+
+        val accountTwo= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountTwo)
+
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
+                value = Value(1000.0, "INR"), description = "Flat rent")
+
+        val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
+
+        transactionResult.id shouldNotBe  null
+        transactionResult.status shouldBe TransactionActivityStatus.FAILED
+        transactionResult.message shouldBe "Debitor : Account closed"
+        transactionResult.value shouldBe Value(1000.0,"INR")
+
+        val accountOneUpdated=accountService.getAccountDetails(accountOne.id)
+        accountOneUpdated.accountBalance shouldBe 100.0
         accountOneUpdated.accountTransaction.size shouldBe 0
+
+        val accountTwoUpdated=accountService.getAccountDetails(accountTwo.id)
+        accountTwoUpdated.accountBalance shouldBe 100.0
+        accountTwoUpdated.accountTransaction.size shouldBe 0
+
+    }
+
+    @Test
+    fun `should  give failed transfer status from one account to another when creditor account is closed `(){
+
+        val accountOne= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.ACTIVE,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountOne)
+
+        val accountTwo= Account(id=0,baseCurrency = "INR",accountBalance = 100.00,type = AccountType.CURRENT,status = AccountStatus.CLOSED,customerName = "ANUJ Rai")
+        account=accountRepository.save(accountTwo)
+
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123", creditor = Creditor(bankId = "", accountNumber = accountTwo.id),
+                value = Value(10.0, "INR"), description = "Flat rent")
+
+        val transactionResult=transactionService.transactIntraBank(accountOne.id, transactionRequest)
+
+        transactionResult.id shouldNotBe  null
+        transactionResult.status shouldBe TransactionActivityStatus.FAILED
+        transactionResult.message shouldBe "Creditor : Account closed : Reverse Transaction"
+        transactionResult.value shouldBe Value(10.0,"INR")
+
+        val accountOneUpdated=accountService.getAccountDetails(accountOne.id)
+        accountOneUpdated.accountBalance shouldBe 100.0
+        accountOneUpdated.accountTransaction.size shouldBe 2
+
+        val accountTwoUpdated=accountService.getAccountDetails(accountTwo.id)
+        accountTwoUpdated.accountBalance shouldBe 100.0
+        accountTwoUpdated.accountTransaction.size shouldBe 0
 
     }
 
