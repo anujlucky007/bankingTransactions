@@ -20,7 +20,7 @@ import java.util.*
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TransactionControllerTest{
+class TransactionControllerTest {
     private lateinit var embeddedServer: EmbeddedServer
     private lateinit var client: HttpClient
     lateinit var redisServer: RedisServer
@@ -52,15 +52,17 @@ class TransactionControllerTest{
                 description = "account transfer",
                 creditor = Creditor(accountNumber = createdAccountTwo.accountNumber)
         )
+        //Transfer Api call
         val request = HttpRequest.POST("/transaction/${createdAccountOne.accountNumber}/transaction-request/${TransactionType.INTRABANK}", transactionRequest)
         val response = client.toBlocking().retrieve(request, TransactionResponse::class.java)
 
         response shouldNotBe null
-        response.id shouldNotBe  null
-        response.value shouldBe Value(100.00,"INR")
+        response.id shouldNotBe null
+        response.value shouldBe Value(100.00, "INR")
         response.status shouldBe TransactionActivityStatus.COMPLETED
         response.message shouldBe "account transfer"
 
+        //fetching Account one details
         val requestAccountDetail = HttpRequest.GET<AccountDTO>("/account/" + createdAccountOne.accountNumber)
         val fetchedAccountDto = client.toBlocking().retrieve(requestAccountDetail, Argument.of(AccountDTO::class.java))
 
@@ -81,12 +83,65 @@ class TransactionControllerTest{
         fetchedAccountSecondDto.accountTransaction[0].amount shouldBe 100.00
 
 
+        //fetching transaction status using transaction id generated
         val transactionStatusRequest = HttpRequest.GET<TransactionResponse>("/transaction/${response.id}/status")
         val transactionStatus = client.toBlocking().retrieve(transactionStatusRequest, Argument.of(TransactionResponse::class.java))
 
         transactionStatus.status shouldBe TransactionActivityStatus.COMPLETED
         transactionStatus.message shouldBe "account transfer"
-        transactionStatus.value shouldBe Value(amount=100.0, currency="INR")
+        transactionStatus.value shouldBe Value(amount = 100.0, currency = "INR")
+
+    }
+
+
+    @Test
+    fun `should give Error in transfer from one account to another of same bank when services give error`() {
+
+        val createdAccountOne = createDummyUserAccount()
+
+        val createdAccountTwo = createDummyUserAccount()
+
+        val transactionRequest = TransactionRequest(
+                requestId = "123",
+                value = Value(1000.00, "INR"),
+                description = "account transfer",
+                creditor = Creditor(accountNumber = createdAccountTwo.accountNumber)
+        )
+        //Transfer Api call
+
+        val request = HttpRequest.POST("/transaction/${createdAccountOne.accountNumber}/transaction-request/${TransactionType.INTRABANK}", transactionRequest)
+        val response = client.toBlocking().retrieve(request, TransactionResponse::class.java)
+
+        response shouldNotBe null
+        response.id shouldNotBe null
+        response.value shouldBe Value(1000.00, "INR")
+        response.status shouldBe TransactionActivityStatus.FAILED
+        response.message shouldBe "Debitor : Account Balance low"
+
+
+        //fetching Account one details
+        val requestAccountDetail = HttpRequest.GET<AccountDTO>("/account/" + createdAccountOne.accountNumber)
+        val fetchedAccountDto = client.toBlocking().retrieve(requestAccountDetail, Argument.of(AccountDTO::class.java))
+
+        fetchedAccountDto.accountBalance shouldBe 100.00
+        fetchedAccountDto.accountTransaction.size shouldBe 0
+
+
+        //fetching Account two details
+        val requestAccountDetailSecond = HttpRequest.GET<AccountDTO>("/account/${createdAccountTwo.accountNumber}")
+        val fetchedAccountSecondDto = client.toBlocking().retrieve(requestAccountDetailSecond, Argument.of(AccountDTO::class.java))
+
+        fetchedAccountSecondDto.accountBalance shouldBe 100.00
+        fetchedAccountSecondDto.accountTransaction.size shouldBe 0
+
+
+        //fetching transaction status using transaction id generated
+        val transactionStatusRequest = HttpRequest.GET<TransactionResponse>("/transaction/${response.id}/status")
+        val transactionStatus = client.toBlocking().retrieve(transactionStatusRequest, Argument.of(TransactionResponse::class.java))
+
+        transactionStatus.status shouldBe TransactionActivityStatus.FAILED
+        transactionStatus.message shouldBe "Debitor : Account Balance low"
+        transactionStatus.value shouldBe Value(amount = 1000.0, currency = "INR")
 
     }
 
@@ -114,7 +169,7 @@ class TransactionControllerTest{
         response.message shouldBe "FUNCTIONALITY NOT SUPPORTED"
     }
 
-        private fun createDummyUserAccount(): AccountDTO {
+    private fun createDummyUserAccount(): AccountDTO {
         val accountDto = AccountDTO(accountBalance = 100.00, customerName = "Anuj Rai", accountType = AccountType.SAVINGS)
         val requestCreate = HttpRequest.POST("/account/create", accountDto)
         return client.toBlocking().retrieve(requestCreate, AccountDTO::class.java)
