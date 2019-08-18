@@ -82,7 +82,7 @@ Account Create Api
             
 Account Status
     
-    URL : http://localhost:8080/account/create
+    URL : localhost:8080/account/{accountNumber}
     
     Request Body
             curl -X GET \
@@ -126,7 +126,46 @@ Account Status
             {
                 "errorMessage": "Account Not Found",
                 "errorCode": "ACC.INVALID.001"
-            }               
+            }    
+            
+Account Transaction
+    
+    URL: localhost:8080/account/transact
+    
+    
+    Request Body :
+            curl -X POST \
+              http://localhost:8080/account/transact \
+              -H 'Accept: */*' \
+              -H 'Accept-Encoding: gzip, deflate' \
+              -H 'Cache-Control: no-cache' \
+              -H 'Connection: keep-alive' \
+              -H 'Content-Length: 180' \
+              -H 'Content-Type: application/json' \
+              -H 'Host: localhost:8080' \
+              -H 'Postman-Token: da621a9c-2239-46e5-bde4-1a4895ce4f75,7e8b9e28-b2cd-4b95-86d3-0e6c4ffbd210' \
+              -H 'User-Agent: PostmanRuntime/7.15.2' \
+              -H 'cache-control: no-cache' \
+              -d '{
+                "accountNumber": 1,
+                "transactionAmount": {
+                	"value":3,
+                	"currency" :"EUR"
+                },
+                "activityRemark":"deposit 3 Euro in account",
+                "activityType" :"DEPOSIT"
+            }'
+            
+    Response :
+            
+            {
+                "accountNumber": 1,
+                "updatedAccountBalance": 336.79,
+                "status": "COMPLETED",
+                "message": "deposit 3 Euro in account"
+            }        
+    
+               
     
 
 Transaction Api
@@ -140,26 +179,28 @@ Transaction Api
                 -H 'Accept-Encoding: gzip, deflate' \
                 -H 'Cache-Control: no-cache' \
                 -H 'Connection: keep-alive' \
-                -H 'Content-Length: 185' \
+                -H 'Content-Length: 184' \
                 -H 'Content-Type: application/json' \
                 -H 'Host: localhost:8080' \
+                -H 'Postman-Token: e9158873-7138-4fe9-99be-403e4afc5747,6c2f9f85-7f45-43f9-904d-6f348c997754' \
+                -H 'User-Agent: PostmanRuntime/7.15.2' \
                 -H 'cache-control: no-cache' \
                 -d '{
-                  "requestId": "23",
+                  "requestId": "223",
                   "description": "anuj money ask",
                   "creditor": {
                       "accountNumber": 2
                   },
                   "value": {
-                      "amount": 100,
-                      "currency": "INR"
+                      "amount": 1,
+                      "currency": "EUR"
                   }
               }'
       
       Response:
       
        {
-           "id": "dae4ed02-b07b-4e14-b6ed-7a909de07d7b",
+           "id": "e241c307-f05c-465c-8dc6-1255dc4fa460",
            "value": {
                "amount": 1.0,
                "currency": "EUR"
@@ -167,4 +208,72 @@ Transaction Api
            "status": "COMPLETED",
            "message": "anuj money ask"
        }
-                
+       
+       
+     Request :
+            curl -X POST \
+              http://localhost:8080/transaction/1/transaction-request/INTRABANK \
+              -H 'Accept: */*' \
+              -H 'Accept-Encoding: gzip, deflate' \
+              -H 'Cache-Control: no-cache' \
+              -H 'Connection: keep-alive' \
+              -H 'Content-Length: 187' \
+              -H 'Content-Type: application/json' \
+              -H 'Host: localhost:8080' \
+              -H 'Postman-Token: 38fc73e6-14a2-43dd-904f-07bbbe9af64d,6ee1af4e-032e-48dd-a8a9-6f9b6e1686ed' \
+              -H 'User-Agent: PostmanRuntime/7.15.2' \
+              -H 'cache-control: no-cache' \
+              -d '{
+                "requestId": "2232",
+                "description": "anuj money ask",
+                "creditor": {
+                    "accountNumber": 222
+                },
+                "value": {
+                    "amount": 1,
+                    "currency": "EUR"
+                }
+            }'
+            
+      Response :
+            
+            {
+                "id": "30fe05ad-28d0-46ce-9ca4-0cedcf5398e2",
+                "value": {
+                    "amount": 1.0,
+                    "currency": "EUR"
+                },
+                "status": "FAILED",
+                "message": "Creditor : Account Not Found : Reverse Transaction"
+            }        
+ 
+ 
+ Transaction Status
+    
+     URL : localhost:8080/transaction/{transactionNumber}/status  
+     
+     Request :
+       curl -X GET \
+         http://localhost:8080/transaction/30fe05ad-28d0-46ce-9ca4-0cedcf5398e2/status \
+         -H 'Accept: */*' \
+         -H 'Accept-Encoding: gzip, deflate' \
+         -H 'Cache-Control: no-cache' \
+         -H 'Connection: keep-alive' \
+         -H 'Content-Type: application/json' \
+         -H 'Host: localhost:8080' \
+         -H 'Postman-Token: aac8b06f-b18d-4b7b-865b-a8eb2ef7795e,5cda0e10-604e-4636-ac8a-4345665e40a3' \
+         -H 'User-Agent: PostmanRuntime/7.15.2' \
+         -H 'cache-control: no-cache'
+         
+     Response:
+        
+        {
+            "id": "30fe05ad-28d0-46ce-9ca4-0cedcf5398e2",
+            "value": {
+                "amount": 1.0,
+                "currency": "EUR"
+            },
+            "status": "FAILED",
+            "message": "Creditor : Account Not Found : Reverse Transaction"
+        }    
+                       
