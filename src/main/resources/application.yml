@@ -19,8 +19,14 @@ application:
   exchangeRate:
     conversionMap:
       INR:
-        USD: 23.00
+        USD: 0.014
         INR: 1.00
+        EUR: 0.013
       USD:
         INR: 70.0
         USD: 1.00
+        EUR: 0.90
+      EUR:
+        INR: 78.93
+        USD: 1.11
+        EUR: 1.00
