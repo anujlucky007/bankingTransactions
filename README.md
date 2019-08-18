@@ -47,9 +47,91 @@ diagram.jpg)
     
 ## API Documentation
 
+Account Create Api
+
+    url : http://localhost:8080/account/create
+    Request Body :
+            curl -X POST \
+              http://localhost:8080/account/create \
+              -H 'Accept: */*' \
+              -H 'Accept-Encoding: gzip, deflate' \
+              -H 'Cache-Control: no-cache' \
+              -H 'Connection: keep-alive' \
+              -H 'Content-Length: 115' \
+              -H 'Content-Type: application/json' \
+              -H 'Host: localhost:8080' \
+              -H 'Postman-Token: c63b2ea1-38ea-4c44-9bb3-62360a4fe959,1c82ea03-4bae-4d44-a4b4-79ffd860460c' \
+              -H 'User-Agent: PostmanRuntime/7.15.2' \
+              -H 'cache-control: no-cache' \
+              -d '{
+                "accountBalance": 100,
+                "accountType": "SAVINGS",
+                "status": "ACTIVE",
+                "customerName": "ANUJ Rai"
+            }'
+     Response :
+            
+            {
+                "accountNumber": 1,
+                "accountBalance": 100.0,
+                "customerName": "ANUJ Rai",
+                "baseCurrency": "INR",
+                "accountType": "SAVINGS",
+                "status": "ACTIVE"
+            }
+            
+Account Status
+    
+    URL : http://localhost:8080/account/create
+    
+    Request Body
+            curl -X GET \
+              http://localhost:8080/account/1 \
+              -H 'Accept: */*' \
+              -H 'Accept-Encoding: gzip, deflate' \
+              -H 'Cache-Control: no-cache' \
+              -H 'Connection: keep-alive' \
+              -H 'Host: localhost:8080' \
+              -H 'Postman-Token: 43d28510-6fae-4892-9356-6cbaf0f838dd,be05a245-d3a9-4756-9d25-e7bfdbeb6486' \
+              -H 'User-Agent: PostmanRuntime/7.15.2' \
+              -H 'cache-control: no-cache'
+              
+    Response :
+            
+            {
+                "accountNumber": 1,
+                "accountBalance": 100.0,
+                "customerName": "ANUJ Rai",
+                "baseCurrency": "INR",
+                "accountType": "SAVINGS",
+                "status": "ACTIVE"
+            }
+            
+            
+    Request :
+            
+            curl -X GET \
+              http://localhost:8080/account/2 \
+              -H 'Accept: */*' \
+              -H 'Accept-Encoding: gzip, deflate' \
+              -H 'Cache-Control: no-cache' \
+              -H 'Connection: keep-alive' \
+              -H 'Host: localhost:8080' \
+              -H 'Postman-Token: 5681be1c-cd0a-4284-8553-95651b88a75a,78e9929d-bdeb-4675-a0c4-167ac243c714' \
+              -H 'User-Agent: PostmanRuntime/7.15.2' \
+              -H 'cache-control: no-cache'
+              
+    Response :
+            
+            {
+                "errorMessage": "Account Not Found",
+                "errorCode": "ACC.INVALID.001"
+            }               
+    
+
 Transaction Api
 
-    Api :http://localhost:8080/transaction/1/transaction-request/INTRABANK
+     URL :http://localhost:8080/transaction/1/transaction-request/INTRABANK
    
      Request body 
               curl -X POST \
